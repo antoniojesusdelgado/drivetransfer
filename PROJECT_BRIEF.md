@@ -66,10 +66,12 @@ Silent overwrite is not permitted.
 - Unit tests cover selection propagation, duplicate decisions and resumable execution.
 - The UI is keyboard accessible and usable on desktop and mobile.
 
-## Decisions for the first development session
+## Confirmed MVP decisions
 
-- Confirm Apps Script plus `clasp` as the initial runtime or document why a different architecture is necessary.
-- Define OAuth scopes for read-only discovery, copy and move.
-- Model job state, pagination, quotas and resumability.
-- Choose a synthetic fixture format for Drive trees.
-- Define the first vertical slice before scaffolding the full interface.
+- Support My Drive and Shared Drives, including compatible cross-space transfers.
+- Include real OAuth integration in the initial MVP.
+- Retain Apps Script plus `clasp` as the initial target while keeping the domain runtime-independent.
+- Use a synthetic Drive tree for the public demo and automated tests.
+- Deliver the synthetic workflow before connecting a development Google account.
+
+The OAuth implementation must test whether `drive.file` provides complete access to a selected folder subtree. If it does not, the MVP will use the restricted `drive` scope and complete the required verification work. See [ARCHITECTURE.md](ARCHITECTURE.md).

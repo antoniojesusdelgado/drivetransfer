@@ -1,39 +1,45 @@
 # DriveTransfer
 
-DriveTransfer is a public, independent demonstration of a document-transfer assistant for Google Drive. It indexes a source folder recursively, lets the user choose which files and directories to include, checks the destination for duplicates and then copies or moves the selected content with progress tracking and a final report.
+DriveTransfer ayuda a elegir, revisar y transferir archivos entre carpetas de Google Drive. Admite My Drive y unidades compartidas, detecta duplicados antes de empezar y mantiene copia y movimiento como acciones separadas.
 
-The original tool was created to reduce the manual work involved in preparing economic-justification documentation at Fundacion Cibervoluntarios. The public project will be an independent replica: it will use synthetic examples and will not contain real documents, folder identifiers, credentials, internal rules or connections to the Foundation's environment.
+## Experiencia
 
-## Product objective
+- Acceso con Google mediante Google Identity Services y Google Picker.
+- Recorrido completo sin iniciar sesión usando archivos de ejemplo.
+- Selección jerárquica, búsqueda y acciones masivas.
+- Vista previa obligatoria antes de cualquier cambio.
+- Copia predeterminada y confirmación adicional para mover.
+- Progreso pausable, reintentos seguros e informe final sin identificadores internos.
 
-Turn a repetitive, error-prone document transfer into a controlled workflow:
+## Arquitectura
 
-1. Connect a source and destination folder.
-2. Index the complete source hierarchy.
-3. Select files and directories from a clear tree view.
-4. Preview the operation and detect duplicates.
-5. Copy or move only the approved items.
-6. Track progress, warnings and recoverable errors.
-7. Review and export a final operation summary.
+El frontend React/Vite se carga de forma independiente. Cuando una persona conecta Google, conserva el token de acceso únicamente en memoria y llama a un ejecutable de Apps Script mediante `scripts.run`. Apps Script vuelve a validar cada solicitud y ejecuta Drive API v3 con los permisos de esa persona.
 
-## Planned capabilities
+Consulta [ARCHITECTURE.md](ARCHITECTURE.md) para las decisiones de seguridad y [DEPLOYMENT.md](DEPLOYMENT.md) para configurar un entorno de desarrollo.
 
-- Recursive Google Drive folder indexing.
-- Search, filters and bulk selection.
-- Copy and move operations with separate safeguards.
-- Duplicate detection before execution.
-- Dry-run preview and explicit confirmation.
-- Progress, cancellation and safe retry.
-- Results dashboard with copied, moved, skipped and failed items.
-- Accessible and responsive interface.
-- Synthetic demo mode without access to a real Drive account.
+## Desarrollo local
 
-## Initial technical direction
+Requisitos: Node.js 24 y npm 11 o versiones compatibles.
 
-The first implementation should evaluate a TypeScript-based Google Apps Script application managed with `clasp`, preserving the strengths of the original solution while improving maintainability, testing and user experience. The architecture must remain open to a separate web frontend only if OAuth, execution time or Drive API constraints justify it.
+```powershell
+npm install
+Copy-Item .env.example .env.local
+npm run dev
+```
 
-See [PROJECT_BRIEF.md](PROJECT_BRIEF.md) for the product requirements and [CODEX_PROJECT_PROMPT.md](CODEX_PROJECT_PROMPT.md) for the prompt to start the dedicated Codex project.
+Sin variables de Google, la experiencia de exploración continúa disponible y el botón de conexión muestra un aviso seguro.
 
-## Repository status
+Comprobaciones:
 
-Project definition and architecture phase. No production credentials or deployment are included.
+```powershell
+npm run format
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm audit --audit-level=moderate
+```
+
+## Privacidad
+
+No incluyas credenciales, tokens, nombres reales, IDs de carpetas ni documentos privados en el repositorio, pruebas o capturas. Las variables `VITE_*` son identificadores públicos del cliente web; la API key debe limitarse por HTTP referrer y exclusivamente a Google Picker API.
