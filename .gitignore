@@ -13,3 +13,4 @@ Thumbs.db
 # Local exports and test fixtures may contain document metadata.
 fixtures/private/
 exports/
+.vercel
