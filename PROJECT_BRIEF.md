@@ -1,4 +1,4 @@
-# CopyDrive product brief
+# CopyDrive Demo product brief
 
 ## Context
 

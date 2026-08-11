@@ -1,6 +1,6 @@
-# CopyDrive
+# CopyDrive Demo
 
-CopyDrive is a document-transfer assistant for Google Drive. It indexes a source folder recursively, lets the user choose which files and directories to include, checks the destination for duplicates and then copies or moves the selected content with progress tracking and a final report.
+CopyDrive Demo is a public, independent demonstration of a document-transfer assistant for Google Drive. It indexes a source folder recursively, lets the user choose which files and directories to include, checks the destination for duplicates and then copies or moves the selected content with progress tracking and a final report.
 
 The original tool was created to reduce the manual work involved in preparing economic-justification documentation at Fundacion Cibervoluntarios. The public project will be an independent replica: it will use synthetic examples and will not contain real documents, folder identifiers, credentials, internal rules or connections to the Foundation's environment.
 
