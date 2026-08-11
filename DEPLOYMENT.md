@@ -54,3 +54,7 @@ VITE_APPS_SCRIPT_DEPLOYMENT_ID=...
 7. Revisa que los registros no contengan tokens, nombres ni IDs.
 
 La publicación, el dominio y la apertura del consentimiento OAuth a usuarios externos quedan fuera de esta fase.
+
+## Alojamiento web
+
+El frontend puede publicarse en Vercel como aplicación Vite. `vercel.json` aplica cabeceras defensivas compatibles con Google Identity Services y Picker. Mantén `Cross-Origin-Opener-Policy: same-origin-allow-popups`; un aislamiento más estricto impediría el flujo OAuth emergente.
