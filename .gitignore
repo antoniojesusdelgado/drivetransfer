@@ -1,0 +1,14 @@
+.clasp.json
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+coverage/
+.DS_Store
+Thumbs.db
+*.log
+
+# Local exports and test fixtures may contain document metadata.
+fixtures/private/
+exports/
