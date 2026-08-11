@@ -11,12 +11,24 @@
 - Desktop implementation: `artifacts/design-qa/landing-desktop.png`
 - Desktop side-by-side: `artifacts/design-qa/comparison-desktop.png`
 - Mobile implementation: `artifacts/design-qa/landing-mobile.png`
+- Current desktop before change: `artifacts/design-qa/landing-desktop-current-production.png`
+- Current desktop after change: `artifacts/design-qa/landing-desktop-after.png`
+- Mobile before change: `artifacts/design-qa/landing-mobile-before.png`
+- Mobile after change: `artifacts/design-qa/landing-mobile-after.png`
+- Responsive comparison: `artifacts/design-qa/comparison-responsive-mobile-pass.png`
+- Mobile image-background correction: `artifacts/design-qa/landing-mobile-no-square.png`
+- Mobile image-background comparison: `artifacts/design-qa/comparison-mobile-image-background.png`
+- Mobile vertical-balance correction: `artifacts/design-qa/landing-mobile-balanced.png`
+- Mobile vertical-balance comparison: `artifacts/design-qa/comparison-mobile-vertical-balance.png`
 
 ## Comparison history
 
 1. Initial capture: the hero was too low, the illustration was too small and the three-step row started about 70 px below the reference.
 2. First adjustment: matched the step row and illustration bounds; the grid's intrinsic image height still pushed the copy down.
 3. Final adjustment: constrained the desktop grid row and aligned the copy, buttons, illustration and steps with the reference.
+4. Mobile density pass: reduced the illustration and vertical spacing below `540px`, kept both actions prominent and arranged the three explanatory steps in a compact row.
+5. Mobile image pass: the reduced illustration exposed the raster's rectangular background. Replacing the mobile-only multiply blend with darken integrates the asset into the page while leaving the desktop rendering unchanged.
+6. Mobile height pass: tall mobile viewports left excessive empty space below the steps. Height-aware spacing now distributes that space around the composition while preserving the compact, scroll-free layout on shorter screens.
 
 ## Final visual review
 
@@ -25,7 +37,10 @@
 - P2: none.
 - P3: minor raster and antialiasing differences remain in the independently recreated illustration and brand mark.
 - The desktop composition, spacing, button geometry, typography hierarchy and three-step row match the supplied reference at the target viewport.
-- The mobile layout preserves the complete illustration, content, actions and steps in a single vertical flow.
+- The desktop composition remains unchanged and fits exactly at `1488 x 1058` (`scrollHeight: 1058`, `scrollWidth: 1488`).
+- The mobile layout preserves the complete illustration, content, actions and steps in one viewport at `375 x 667`, `390 x 700`, `390 x 844` and `520 x 844`.
+- The mobile illustration no longer shows a rectangular image boundary; its organic backdrop blends into the page background without clipping the folders or files.
+- Tall mobile screens use the available height more evenly; short mobile screens retain the compact spacing and remain scroll-free.
 
 ## Interaction and responsive checks
 
@@ -34,6 +49,7 @@
 - Missing Google configuration checked: a user-facing message is shown and exploration remains available.
 - Browser console: no errors or warnings during the checked flow.
 - Horizontal overflow: none at `390`, `768`, `1024` or `1488` px.
+- Mobile scroll: none at `375 x 667`, `390 x 700`, `390 x 844` or `520 x 844`.
 - Reduced motion: supported through `prefers-reduced-motion`.
 
 final result: passed
