@@ -1,10 +1,10 @@
-# CopyDrive Demo product brief
+# DriveTransfer product brief
 
 ## Context
 
 Economic justifications for publicly funded projects require assembling large volumes of supporting documentation: incoming invoices, expense sheets, receipts, employment contracts, payroll documents and their corresponding payment evidence. When those documents are distributed across Google Drive, moving them one by one into each project folder is slow and difficult to verify.
 
-CopyDrive originated as a Google Apps Script tool that reduced this manual work by connecting a source folder and a destination folder, indexing the source hierarchy, allowing selective transfer, preventing duplicates and reporting the result.
+DriveTransfer evolves the functional approach of a Google Apps Script tool that reduced this manual work by connecting a source folder and a destination folder, indexing the source hierarchy, allowing selective transfer, preventing duplicates and reporting the result.
 
 ## Public replica
 
@@ -25,7 +25,7 @@ The repository will reproduce the functional approach without exposing the opera
 
 1. The user authenticates with Google using minimum permissions.
 2. The user selects or enters an authorized source folder and destination folder.
-3. CopyDrive validates access and prevents invalid source/destination combinations.
+3. DriveTransfer validates access and prevents invalid source/destination combinations.
 4. The system indexes the source hierarchy using pagination and quota-aware batches.
 5. The user selects files or folders and chooses `Copy` or `Move`.
 6. A dry run displays totals, duplicates, permission issues and expected changes.

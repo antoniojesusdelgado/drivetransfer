@@ -1,10 +1,10 @@
-# Prompt inicial para el proyecto CopyDrive Demo
+# Prompt inicial para el proyecto DriveTransfer
 
-Copia y pega el siguiente texto como primer mensaje en un nuevo proyecto de Codex cuya carpeta sea `C:\Users\anton\Projects\copydrive-demo`.
+Copia y pega el siguiente texto como primer mensaje en un nuevo proyecto de Codex cuya carpeta sea `C:\Users\anton\Projects\drive-transfer-demo`.
 
 ---
 
-Quiero desarrollar **CopyDrive Demo**, una replica publica e independiente de una herramienta que cree para resolver una necesidad operativa real en Fundacion Cibervoluntarios.
+Quiero desarrollar **DriveTransfer**, una replica publica e independiente de una herramienta que cree para resolver una necesidad operativa real en Fundacion Cibervoluntarios.
 
 ## Problema que resuelve
 

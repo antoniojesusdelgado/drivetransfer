@@ -8,7 +8,7 @@
 
 ## Product boundaries
 
-- CopyDrive is a public, independent replica of a tool created to solve a real document-management need at Fundacion Cibervoluntarios.
+- DriveTransfer is a public, independent replica of a tool created to solve a real document-management need at Fundacion Cibervoluntarios.
 - Never include real Google Drive folder IDs, document names, grant files, invoices, payroll records, contracts, credentials or internal procedures.
 - Use only synthetic folder trees, files and metadata in tests, screenshots and demonstrations.
 - Do not imply that the public repository is owned, sponsored or supported by Fundacion Cibervoluntarios.
