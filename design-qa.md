@@ -64,6 +64,29 @@
 
 final result: passed
 
+## Mobile navigation and legal-density pass — 2026-08-12
+
+- Evidence: `artifacts/design-qa/landing-mobile-legal-clean.png` and
+  `artifacts/design-qa/workspace-mobile-selector.png`.
+- The landing disclosure now contains one compact first-layer notice, three
+  direct legal links and the requested copyright; the duplicate mobile legal
+  navigation has been removed.
+- The three explanatory steps stack vertically below `540px`, preserving title
+  and paragraph readability instead of compressing them into three narrow
+  columns.
+- Workspace navigation uses one native, labelled section selector through
+  `760px`; tablet and desktop retain the five visible tabs.
+- The sticky mobile header has two explicit rows, keeps DriveTransfer and Salir
+  visible, and does not crop Historial or Privacidad.
+- The analytics dialog respects the bottom safe area, stays below `76svh` and
+  keeps equally prominent reject and accept actions visible.
+- Checked at 375, 390, 430, 768, 1024 and 1488 px: no horizontal overflow,
+  console errors or page errors.
+- P0: none. P1: none. P2: none. P3: native select appearance varies slightly
+  between Safari, Chromium and Android by design.
+
+final result: passed
+
 ## Legal and component polish — 2026-08-12
 
 - Favorite cards now use a consistent two-action layout without native button borders.

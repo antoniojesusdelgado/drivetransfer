@@ -2,7 +2,6 @@ import { ArrowRight, FolderSimple } from "@phosphor-icons/react";
 import googleMark from "../assets/google-g.svg";
 import heroTransfer from "../assets/hero-transfer.png";
 import { Brand } from "./Brand";
-import { LegalLinks } from "./LegalPages";
 
 interface LandingViewProps {
   readonly connecting: boolean;
@@ -80,9 +79,8 @@ export function LandingView({
           ) : null}
           <div className="landing__legal">
             <p>
-              Responsable: Antonio Jesús Delgado Briones. Al conectar Google se
-              tratarán únicamente los datos necesarios para la función que
-              solicites. Consulta <a href="/privacidad">Privacidad</a>, la{" "}
+              Al continuar, confirmas que has leído la{" "}
+              <a href="/privacidad">Privacidad</a>, la{" "}
               <a href="/procedencia-datos">procedencia de los datos</a> y el{" "}
               <a href="/aviso-legal">aviso legal</a>.
             </p>
@@ -112,7 +110,6 @@ export function LandingView({
           </li>
         ))}
       </ol>
-      <LegalLinks compact />
     </main>
   );
 }

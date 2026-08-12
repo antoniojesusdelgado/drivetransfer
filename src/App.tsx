@@ -1318,6 +1318,14 @@ export default function App() {
     );
   }
 
+  const workspaceSections: readonly (readonly [WorkspaceView, string])[] = [
+    ["transfer", "Transferir"],
+    ["jobs", "Centro"],
+    ["schedules", "Programaciones"],
+    ["history", "Historial"],
+    ["privacy", "Privacidad"],
+  ];
+
   return (
     <main className="app-shell">
       <header className="app-header">
@@ -1329,13 +1337,7 @@ export default function App() {
           <Brand compact />
         </button>
         <nav className="workspace-nav" aria-label="Secciones">
-          {[
-            ["transfer", "Transferir"],
-            ["jobs", "Centro"],
-            ["schedules", "Programaciones"],
-            ["history", "Historial"],
-            ["privacy", "Privacidad"],
-          ].map(([value, label]) => (
+          {workspaceSections.map(([value, label]) => (
             <button
               key={value}
               className={workspaceView === value ? "is-active" : ""}
@@ -1346,6 +1348,21 @@ export default function App() {
             </button>
           ))}
         </nav>
+        <label className="workspace-select">
+          <span>Sección</span>
+          <select
+            value={workspaceView}
+            onChange={(event) =>
+              setWorkspaceView(event.target.value as WorkspaceView)
+            }
+          >
+            {workspaceSections.map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
         <div className="app-header__actions">
           <span className="mode-pill">
             {mode === "explore" ? "Modo exploración" : "Google conectado"}
