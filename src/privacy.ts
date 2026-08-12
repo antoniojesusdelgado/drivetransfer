@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { normalizePublicEnvironmentValue } from "./environment";
 
 export type ConsentState = "pending" | "accepted" | "rejected";
 
@@ -17,7 +18,9 @@ export interface DataDeletionSummary {
 
 const PREFERENCES_KEY = "driveTransfer.privacyPreferences";
 const CONSENT_VERSION = 2;
-const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ?? "";
+const GA_ID = normalizePublicEnvironmentValue(
+  import.meta.env.VITE_GA_MEASUREMENT_ID,
+);
 
 declare global {
   interface Window {

@@ -1,3 +1,5 @@
+import { normalizePublicEnvironmentValue } from "../../environment";
+
 const GOOGLE_IDENTITY_SCRIPT_ID = "google-identity-services";
 const GOOGLE_SCOPES = [
   "https://www.googleapis.com/auth/drive",
@@ -46,11 +48,18 @@ export interface GoogleClientConfiguration {
 }
 
 export function googleClientConfiguration(): GoogleClientConfiguration | null {
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim();
-  const apiKey = import.meta.env.VITE_GOOGLE_API_KEY?.trim();
-  const appId = import.meta.env.VITE_GOOGLE_APP_ID?.trim();
-  const appsScriptDeploymentId =
-    import.meta.env.VITE_APPS_SCRIPT_DEPLOYMENT_ID?.trim();
+  const clientId = normalizePublicEnvironmentValue(
+    import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  );
+  const apiKey = normalizePublicEnvironmentValue(
+    import.meta.env.VITE_GOOGLE_API_KEY,
+  );
+  const appId = normalizePublicEnvironmentValue(
+    import.meta.env.VITE_GOOGLE_APP_ID,
+  );
+  const appsScriptDeploymentId = normalizePublicEnvironmentValue(
+    import.meta.env.VITE_APPS_SCRIPT_DEPLOYMENT_ID,
+  );
   if (!clientId || !apiKey || !appId || !appsScriptDeploymentId) return null;
   return { clientId, apiKey, appId, appsScriptDeploymentId };
 }
