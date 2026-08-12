@@ -4,6 +4,7 @@
 !.env.example
 node_modules/
 dist/
+apps-script-dist/
 coverage/
 .DS_Store
 Thumbs.db
@@ -12,3 +13,4 @@ Thumbs.db
 # Local exports and test fixtures may contain document metadata.
 fixtures/private/
 exports/
+.vercel

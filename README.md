@@ -1,39 +1,75 @@
 # DriveTransfer
 
-DriveTransfer is a public, independent demonstration of a document-transfer assistant for Google Drive. It indexes a source folder recursively, lets the user choose which files and directories to include, checks the destination for duplicates and then copies or moves the selected content with progress tracking and a final report.
+**Versión 1.0.0** · [drivetransfer.app](https://drivetransfer.app)
 
-The original tool was created to reduce the manual work involved in preparing economic-justification documentation at Fundacion Cibervoluntarios. The public project will be an independent replica: it will use synthetic examples and will not contain real documents, folder identifiers, credentials, internal rules or connections to the Foundation's environment.
+DriveTransfer es una recreación técnica personal, gratuita y no comercial,
+desarrollada desde cero para portfolio. No contiene código, documentos, datos,
+procedimientos internos ni activos de empleadores o clientes, y no está
+patrocinada ni respaldada por Google.
 
-## Product objective
+La información legal pública está disponible en `/privacidad`,
+`/procedencia-datos`, `/aviso-legal`, `/cookies` y `/eliminar-datos`.
 
-Turn a repetitive, error-prone document transfer into a controlled workflow:
+DriveTransfer ayuda a elegir, revisar y transferir archivos entre carpetas de Google Drive. Admite My Drive y unidades compartidas, detecta duplicados antes de empezar y mantiene copia y movimiento como acciones separadas.
 
-1. Connect a source and destination folder.
-2. Index the complete source hierarchy.
-3. Select files and directories from a clear tree view.
-4. Preview the operation and detect duplicates.
-5. Copy or move only the approved items.
-6. Track progress, warnings and recoverable errors.
-7. Review and export a final operation summary.
+## Experiencia
 
-## Planned capabilities
+- Acceso con Google mediante Google Identity Services y Google Picker.
+- Recorrido completo sin iniciar sesión usando archivos de ejemplo.
+- Selección jerárquica, búsqueda y acciones masivas.
+- Vista previa obligatoria antes de cualquier cambio.
+- Copia predeterminada y confirmación adicional para mover.
+- Progreso pausable, reintentos seguros e informe final sin identificadores internos.
 
-- Recursive Google Drive folder indexing.
-- Search, filters and bulk selection.
-- Copy and move operations with separate safeguards.
-- Duplicate detection before execution.
-- Dry-run preview and explicit confirmation.
-- Progress, cancellation and safe retry.
-- Results dashboard with copied, moved, skipped and failed items.
-- Accessible and responsive interface.
-- Synthetic demo mode without access to a real Drive account.
+- Comprobación previa de volumen, permisos, conflictos y tiempo estimado.
+- Reglas de duplicados para omitir, conservar ambos o detenerse a revisar.
+- Rutas favoritas privadas, reanudación durante siete días y avisos al terminar.
+- Reintento exclusivo de los elementos fallidos sin repetir los completados.
+- Centro privado con trabajos activos, en cola, pausados y terminados.
+- Modo «Solo comprobar», filtros combinables y resolución individual o masiva de conflictos.
+- Programaciones únicas, diarias, semanales y mensuales para copias y sincronizaciones conservadoras.
+- Historial privado de 90 días e informes JSON/CSV sin identificadores internos.
 
-## Initial technical direction
+## Arquitectura
 
-The first implementation should evaluate a TypeScript-based Google Apps Script application managed with `clasp`, preserving the strengths of the original solution while improving maintainability, testing and user experience. The architecture must remain open to a separate web frontend only if OAuth, execution time or Drive API constraints justify it.
+El frontend React/Vite se carga de forma independiente. Cuando una persona conecta Google, conserva el token de acceso únicamente en memoria y llama a un ejecutable de Apps Script mediante `scripts.run`. Apps Script vuelve a validar cada solicitud y ejecuta Drive API v3 con los permisos de esa persona.
 
-See [PROJECT_BRIEF.md](PROJECT_BRIEF.md) for the product requirements and [CODEX_PROJECT_PROMPT.md](CODEX_PROJECT_PROMPT.md) for the prompt to start the dedicated Codex project.
+Consulta [ARCHITECTURE.md](ARCHITECTURE.md) para las decisiones de seguridad y [DEPLOYMENT.md](DEPLOYMENT.md) para configurar un entorno de desarrollo.
 
-## Repository status
+## Desarrollo local
 
-Project definition and architecture phase. No production credentials or deployment are included.
+Requisitos: Node.js 24 y npm 11 o versiones compatibles.
+
+```powershell
+npm install
+Copy-Item .env.example .env.local
+npm run dev
+```
+
+Sin variables de Google, la experiencia de exploración continúa disponible y el botón de conexión muestra un aviso seguro.
+
+Comprobaciones:
+
+```powershell
+npm run format
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm audit --audit-level=moderate
+```
+
+## Privacidad
+
+No incluyas credenciales, tokens, nombres reales, IDs de carpetas ni documentos privados en el repositorio, pruebas o capturas. Las variables `VITE_*` son identificadores públicos del cliente web; la API key debe limitarse por HTTP referrer y exclusivamente a Google Picker API.
+
+La aplicación publica información para usuarios en `/privacidad`, `/procedencia-datos` y `/aviso-legal`. Revisa esos textos cuando cambien los permisos, los proveedores, la conservación o las funciones de DriveTransfer.
+
+## Desarrollo asistido por IA
+
+El proyecto se desarrolló con asistencia de OpenAI Codex mediante el entorno
+ChatGPT/Codex, bajo dirección, revisión y responsabilidad humana. Codex no forma
+parte de la aplicación en ejecución y ningún archivo, metadato, identificador o
+token de los usuarios se envía a OpenAI. Consulta
+`THIRD_PARTY_NOTICES.md` para la procedencia del distintivo europeo utilizado
+voluntariamente como medida de transparencia.

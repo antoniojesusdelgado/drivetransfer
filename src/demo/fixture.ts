@@ -1,0 +1,100 @@
+import type { DestinationEntry, DriveTree } from "../domain/types";
+
+const fullAccess = { canRead: true, canCopy: true, canMove: true } as const;
+
+export const syntheticSourceTree: DriveTree = {
+  rootId: "root-synthetic",
+  items: [
+    {
+      id: "root-synthetic",
+      parentId: null,
+      name: "Documentos del equipo",
+      kind: "folder",
+      mimeType: "application/vnd.google-apps.folder",
+      relativePath: "",
+      space: "my_drive",
+      capabilities: fullAccess,
+    },
+    {
+      id: "folder-alpha",
+      parentId: "root-synthetic",
+      name: "Proyectos activos",
+      kind: "folder",
+      mimeType: "application/vnd.google-apps.folder",
+      relativePath: "Proyectos activos",
+      space: "my_drive",
+      capabilities: fullAccess,
+    },
+    {
+      id: "file-a",
+      parentId: "folder-alpha",
+      name: "Propuesta de proyecto.pdf",
+      kind: "file",
+      mimeType: "application/pdf",
+      size: 42000,
+      relativePath: "Proyectos activos",
+      space: "my_drive",
+      capabilities: fullAccess,
+    },
+    {
+      id: "file-b",
+      parentId: "folder-alpha",
+      name: "Calendario de trabajo.pdf",
+      kind: "file",
+      mimeType: "application/pdf",
+      size: 67000,
+      relativePath: "Proyectos activos",
+      space: "my_drive",
+      capabilities: fullAccess,
+    },
+    {
+      id: "folder-beta",
+      parentId: "root-synthetic",
+      name: "Administración",
+      kind: "folder",
+      mimeType: "application/vnd.google-apps.folder",
+      relativePath: "Administración",
+      space: "my_drive",
+      capabilities: fullAccess,
+    },
+    {
+      id: "file-c",
+      parentId: "folder-beta",
+      name: "Seguimiento mensual.csv",
+      kind: "file",
+      mimeType: "text/csv",
+      size: 16000,
+      relativePath: "Administración",
+      space: "my_drive",
+      capabilities: fullAccess,
+      simulation: "retry_once",
+    },
+    {
+      id: "file-denied",
+      parentId: "folder-beta",
+      name: "Documento de acceso limitado.txt",
+      kind: "file",
+      mimeType: "text/plain",
+      size: 900,
+      relativePath: "Administración",
+      space: "my_drive",
+      capabilities: { canRead: true, canCopy: false, canMove: false },
+    },
+  ],
+};
+
+export const syntheticDestination: readonly DestinationEntry[] = [
+  {
+    name: "Proyectos activos",
+    relativePath: "Proyectos activos",
+    kind: "folder",
+    mimeType: "application/vnd.google-apps.folder",
+  },
+  {
+    name: "Propuesta de proyecto.pdf",
+    relativePath: "Proyectos activos",
+    kind: "file",
+    mimeType: "application/pdf",
+    size: 42000,
+  },
+];
