@@ -99,6 +99,8 @@ describe("Drive recursive indexer", () => {
       saveSchedule: vi.fn(),
       deleteSchedule: vi.fn(),
       runScheduleNow: vi.fn(),
+      exportAccountData: vi.fn(),
+      deleteAccountData: vi.fn(),
     };
 
     let session = createDriveIndexSession(root);

@@ -77,6 +77,8 @@ import { DriveTreeView } from "./ui/DriveTreeView";
 import { JobProgress } from "./ui/JobProgress";
 import { LandingView } from "./ui/LandingView";
 import { PlanSummary } from "./ui/PlanSummary";
+import { PrivacyDataView } from "./ui/PrivacyDataView";
+import { clearDriveTransferLocalData } from "./privacy";
 import {
   CompletionPreferences,
   DuplicatePolicySelector,
@@ -1156,6 +1158,36 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
+  const exportAccountData = async () => {
+    if (!gateway) return;
+    try {
+      const data = await gateway.exportAccountData();
+      const url = URL.createObjectURL(
+        new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }),
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "drive-transfer-my-data.json";
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (exportError) {
+      setError(userFacingError(exportError));
+    }
+  };
+
+  const deleteAccountData = async () => {
+    if (!gateway) throw new Error("GOOGLE_SESSION_EXPIRED");
+    const summary = await gateway.deleteAccountData();
+    if (!summary.verified) throw new Error("DRIVE_REQUEST_FAILED");
+    clearDriveTransferLocalData();
+    if (session) revokeGoogleSession(session);
+    setSession(null);
+    setGateway(null);
+    setMode("landing");
+    resetTransfer();
+    return summary;
+  };
+
   const controlJob = (
     selected: StoredJobManifest,
     action: WorkspaceJobAction,
@@ -1297,6 +1329,7 @@ export default function App() {
             ["jobs", "Centro"],
             ["schedules", "Programaciones"],
             ["history", "Historial"],
+            ["privacy", "Privacidad"],
           ].map(([value, label]) => (
             <button
               key={value}
@@ -1393,6 +1426,14 @@ export default function App() {
 
         {workspaceView === "history" ? (
           <HistoryView history={history} onDownload={downloadWorkspaceReport} />
+        ) : null}
+
+        {workspaceView === "privacy" ? (
+          <PrivacyDataView
+            connected={mode === "google" && gateway !== null}
+            onExport={exportAccountData}
+            onDelete={deleteAccountData}
+          />
         ) : null}
 
         {workspaceView === "transfer" && phase === "select" ? (

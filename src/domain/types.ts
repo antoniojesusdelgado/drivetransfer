@@ -2,7 +2,8 @@ export type DriveSpace = "my_drive" | "shared_drive";
 export type DriveItemKind = "folder" | "file";
 export type TransferCommand = "copy" | "move";
 export type DuplicatePolicy = "skip" | "rename" | "review";
-export type WorkspaceView = "transfer" | "jobs" | "schedules" | "history";
+export type WorkspaceView =
+  "transfer" | "jobs" | "schedules" | "history" | "privacy";
 export type JobKind = "transfer" | "dry_run" | "sync";
 export type WorkspaceJobStatus =
   | "queued"

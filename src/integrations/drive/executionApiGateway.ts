@@ -133,5 +133,18 @@ export function createExecutionApiGateway(input: {
       }).then(() => undefined),
     runScheduleNow: (scheduleId: string) =>
       invoke<WorkspaceSnapshot>("runTransferScheduleNow", { scheduleId }),
+    exportAccountData: () =>
+      invoke<{
+        readonly exportedAt: string;
+        readonly documents: readonly {
+          readonly name: string;
+          readonly data: unknown;
+        }[];
+      }>("exportDriveTransferData", {}),
+    deleteAccountData: () =>
+      invoke<import("../../privacy").DataDeletionSummary>(
+        "deleteDriveTransferData",
+        {},
+      ),
   };
 }

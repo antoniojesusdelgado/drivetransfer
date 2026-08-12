@@ -42,6 +42,7 @@ export function VirtualList<T>({
         >
           {items.slice(range.start, range.end).map((item) => (
             <div
+              className="virtual-list__item"
               key={getKey(item)}
               role="listitem"
               style={{ height: itemHeight }}

@@ -2,6 +2,7 @@ import { ArrowRight, FolderSimple } from "@phosphor-icons/react";
 import googleMark from "../assets/google-g.svg";
 import heroTransfer from "../assets/hero-transfer.png";
 import { Brand } from "./Brand";
+import { LegalLinks } from "./LegalPages";
 
 interface LandingViewProps {
   readonly connecting: boolean;
@@ -61,6 +62,9 @@ export function LandingView({
                 {connecting ? "Abriendo Google…" : "Conectar con Google"}
               </span>
             </button>
+            <p className="landing__limited-access">
+              Acceso con Google limitado temporalmente a usuarios de prueba
+            </p>
             <button
               className="landing-button landing-button--explore"
               onClick={onExplore}
@@ -74,6 +78,19 @@ export function LandingView({
               {error}
             </p>
           ) : null}
+          <div className="landing__legal">
+            <p>
+              Responsable: Antonio Jesús Delgado Briones. Al conectar Google se
+              tratarán únicamente los datos necesarios para la función que
+              solicites. Consulta <a href="/privacidad">Privacidad</a>, la{" "}
+              <a href="/procedencia-datos">procedencia de los datos</a> y el{" "}
+              <a href="/aviso-legal">aviso legal</a>.
+            </p>
+            <small>
+              © 2026 Antonio Jesús Delgado Briones. Todos los derechos
+              reservados.
+            </small>
+          </div>
         </div>
 
         <div className="landing__visual" aria-hidden="true">
@@ -95,6 +112,7 @@ export function LandingView({
           </li>
         ))}
       </ol>
+      <LegalLinks compact />
     </main>
   );
 }

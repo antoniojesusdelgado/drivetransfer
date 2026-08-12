@@ -8,6 +8,7 @@ import {
   Gauge,
   PencilSimple,
   ShieldCheck,
+  X,
   WarningCircle,
 } from "@phosphor-icons/react";
 import type { DuplicatePolicy, TransferPreflight } from "../domain/types";
@@ -151,8 +152,12 @@ export function FavoriteRoutes({
       </div>
       <div className="favorites__list">
         {favorites.map((favorite) => (
-          <div className="favorite-chip" key={favorite.id}>
-            <button onClick={() => onApply(favorite)}>
+          <article className="favorite-chip" key={favorite.id}>
+            <button
+              className="favorite-chip__apply"
+              onClick={() => onApply(favorite)}
+              aria-label={`Usar la transferencia favorita ${favorite.name}`}
+            >
               <strong>{favorite.name}</strong>
               <small>{favorite.command === "copy" ? "Copiar" : "Mover"}</small>
             </button>
@@ -161,9 +166,9 @@ export function FavoriteRoutes({
               onClick={() => onDelete(favorite)}
               aria-label={`Eliminar ${favorite.name}`}
             >
-              ×
+              <X weight="bold" aria-hidden="true" />
             </button>
-          </div>
+          </article>
         ))}
       </div>
     </section>

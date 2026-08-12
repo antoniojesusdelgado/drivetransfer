@@ -223,4 +223,12 @@ export interface DriveRuntimeGateway {
   ): Promise<TransferScheduleRecord>;
   deleteSchedule(scheduleId: string): Promise<void>;
   runScheduleNow(scheduleId: string): Promise<WorkspaceSnapshot>;
+  exportAccountData(): Promise<{
+    readonly exportedAt: string;
+    readonly documents: readonly {
+      readonly name: string;
+      readonly data: unknown;
+    }[];
+  }>;
+  deleteAccountData(): Promise<import("../../privacy").DataDeletionSummary>;
 }

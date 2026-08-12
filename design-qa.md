@@ -63,3 +63,13 @@
 - The new workspace views produced no browser console errors or warnings.
 
 final result: passed
+
+## Legal and component polish — 2026-08-12
+
+- Favorite cards now use a consistent two-action layout without native button borders.
+- Virtualized job cards fit inside each allocated row with a clean 12 px canvas gap.
+- Privacy, data provenance and legal notice routes were checked at desktop and 390 px mobile width.
+- OAuth disclosure and copyright remain visible without horizontal overflow.
+- Browser console: no errors.
+
+final result: passed

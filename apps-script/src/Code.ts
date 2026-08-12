@@ -115,3 +115,11 @@ function pruneTransferHistory(): DriveTransferRuntime.WorkspaceSnapshot {
 function dispatchTransferSchedules(): void {
   DriveTransferRuntime.dispatchSchedules();
 }
+
+function exportDriveTransferData(): DriveTransferRuntime.PrivateDataExport {
+  return DriveTransferRuntime.exportPrivateData();
+}
+
+function deleteDriveTransferData(): DriveTransferRuntime.DataDeletionSummary {
+  return DriveTransferRuntime.deleteAllPrivateData();
+}

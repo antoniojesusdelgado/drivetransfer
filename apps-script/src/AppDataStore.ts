@@ -2,6 +2,22 @@ namespace DriveTransferRuntime {
   const APP_DATA_SCHEMA = 1;
   const APP_DATA_INDEX_KEY = "driveTransferAppDataIndex";
   const MAX_DOCUMENT_BYTES = 450_000;
+  const PRIVATE_FILE_PREFIX = "drive-transfer-";
+
+  export interface DataDeletionSummary {
+    readonly deletedDocuments: number;
+    readonly deletedProperties: number;
+    readonly deletedTriggers: number;
+    readonly verified: boolean;
+  }
+
+  export interface PrivateDataExport {
+    readonly exportedAt: string;
+    readonly documents: readonly {
+      readonly name: string;
+      readonly data: unknown;
+    }[];
+  }
 
   interface PrivateEnvelope {
     readonly schemaVersion: number;
@@ -112,5 +128,88 @@ namespace DriveTransferRuntime {
     const index = appDataIndex();
     delete index[name];
     saveAppDataIndex(index);
+  }
+
+  function listDriveTransferFiles(): readonly { id: string; name: string }[] {
+    const files: { id: string; name: string }[] = [];
+    let pageToken: string | undefined;
+    do {
+      const response = appDataDrive().Files.list({
+        spaces: "appDataFolder",
+        q: "name contains '" + PRIVATE_FILE_PREFIX + "' and trashed = false",
+        pageSize: 100,
+        pageToken,
+        fields: "nextPageToken,files(id,name)",
+      });
+      (response.files ?? []).forEach((file) => {
+        if (
+          file.id &&
+          file.name &&
+          file.name.indexOf(PRIVATE_FILE_PREFIX) === 0
+        ) {
+          files.push({ id: file.id, name: file.name });
+        }
+      });
+      pageToken = response.nextPageToken;
+    } while (pageToken);
+    return files;
+  }
+
+  export function exportPrivateData(): PrivateDataExport {
+    try {
+      const documents = listDriveTransferFiles().map((file) => {
+        const envelope = JSON.parse(downloadPrivateFile(file.id)) as {
+          readonly payload?: unknown;
+        };
+        return { name: file.name, data: envelope.payload ?? null };
+      });
+      return { exportedAt: new Date().toISOString(), documents };
+    } catch (error) {
+      throw asSafeRuntimeError(error);
+    }
+  }
+
+  export function deleteAllPrivateData(): DataDeletionSummary {
+    const lock = LockService.getUserLock();
+    lock.waitLock(20_000);
+    try {
+      const files = listDriveTransferFiles();
+      files.forEach((file) => appDataDrive().Files.remove(file.id));
+
+      const properties = PropertiesService.getUserProperties();
+      const allProperties = properties.getProperties();
+      const propertyKeys = Object.keys(allProperties).filter(
+        (key) => key.indexOf("driveTransfer") === 0,
+      );
+      propertyKeys.forEach((key) => properties.deleteProperty(key));
+
+      let deletedTriggers = 0;
+      ScriptApp.getProjectTriggers().forEach((trigger) => {
+        if (trigger.getHandlerFunction() === "dispatchTransferSchedules") {
+          ScriptApp.deleteTrigger(trigger);
+          deletedTriggers += 1;
+        }
+      });
+
+      const verified =
+        listDriveTransferFiles().length === 0 &&
+        Object.keys(properties.getProperties()).every(
+          (key) => key.indexOf("driveTransfer") !== 0,
+        ) &&
+        ScriptApp.getProjectTriggers().every(
+          (trigger) =>
+            trigger.getHandlerFunction() !== "dispatchTransferSchedules",
+        );
+      return {
+        deletedDocuments: files.length,
+        deletedProperties: propertyKeys.length,
+        deletedTriggers,
+        verified,
+      };
+    } catch (error) {
+      throw asSafeRuntimeError(error);
+    } finally {
+      lock.releaseLock();
+    }
   }
 }

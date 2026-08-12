@@ -1,5 +1,13 @@
 # DriveTransfer
 
+DriveTransfer es una recreación técnica personal, gratuita y no comercial,
+desarrollada desde cero para portfolio. No contiene código, documentos, datos,
+procedimientos internos ni activos de empleadores o clientes, y no está
+patrocinada ni respaldada por Google.
+
+La información legal pública está disponible en `/privacidad`,
+`/procedencia-datos`, `/aviso-legal`, `/cookies` y `/eliminar-datos`.
+
 DriveTransfer ayuda a elegir, revisar y transferir archivos entre carpetas de Google Drive. Admite My Drive y unidades compartidas, detecta duplicados antes de empezar y mantiene copia y movimiento como acciones separadas.
 
 ## Experiencia
@@ -52,3 +60,5 @@ npm audit --audit-level=moderate
 ## Privacidad
 
 No incluyas credenciales, tokens, nombres reales, IDs de carpetas ni documentos privados en el repositorio, pruebas o capturas. Las variables `VITE_*` son identificadores públicos del cliente web; la API key debe limitarse por HTTP referrer y exclusivamente a Google Picker API.
+
+La aplicación publica información para usuarios en `/privacidad`, `/procedencia-datos` y `/aviso-legal`. Revisa esos textos cuando cambien los permisos, los proveedores, la conservación o las funciones de DriveTransfer.
