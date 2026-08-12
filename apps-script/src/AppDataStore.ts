@@ -69,7 +69,11 @@ namespace DriveTransferRuntime {
   }
 
   function downloadPrivateFile(fileId: string): string {
-    return DriveApp.getFileById(fileId).getBlob().getDataAsString("UTF-8");
+    const file = DriveApp.getFileById(fileId);
+    if (file.getSize() > MAX_DOCUMENT_BYTES) {
+      throw new Error("INVALID_TRANSFER_REQUEST");
+    }
+    return file.getBlob().getDataAsString("UTF-8");
   }
 
   export function readPrivateDocument<T>(name: string, kind: string): T | null {

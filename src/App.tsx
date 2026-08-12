@@ -167,7 +167,7 @@ const exampleHistory: readonly HistoryEntry[] = [
 ];
 
 function waitBetweenBatches(): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, 240));
+  return new Promise((resolve) => window.setTimeout(resolve, 1100));
 }
 
 function userFacingError(error: unknown): string {
@@ -1006,11 +1006,16 @@ export default function App() {
         .filter(({ result }) => result === "copied" || result === "moved")
         .map(({ operationKey }) => operationKey);
       if (successfulKeys.length > 0) {
-        const verification = await gateway.verifyBatch({
-          destinationFolderId: destinationFolder.id,
-          operationKeys: successfulKeys,
-        });
-        const verified = new Set(verification.verifiedOperationKeys);
+        const verified = new Set<string>();
+        for (let offset = 0; offset < successfulKeys.length; offset += 100) {
+          const verification = await gateway.verifyBatch({
+            destinationFolderId: destinationFolder.id,
+            operationKeys: successfulKeys.slice(offset, offset + 100),
+          });
+          verification.verifiedOperationKeys.forEach((key) =>
+            verified.add(key),
+          );
+        }
         const checkpoints = { ...current.checkpoints };
         for (const operationKey of successfulKeys) {
           if (!verified.has(operationKey)) {

@@ -661,7 +661,8 @@ namespace DriveTransferRuntime {
       const destinationId = requireDriveId(request?.destinationFolderId);
       if (
         !Array.isArray(request?.operationKeys) ||
-        request.operationKeys.length > 500
+        request.operationKeys.length < 1 ||
+        request.operationKeys.length > 100
       ) {
         throw new Error("INVALID_TRANSFER_REQUEST");
       }

@@ -30,4 +30,13 @@ describe("safe reports", () => {
     expect(report.content).toContain('"Informe, mensual"');
     expect(report.mimeType).toContain("text/csv");
   });
+
+  it("neutralizes spreadsheet formulas in CSV values", () => {
+    const report = createJobReport(
+      { ...manifest, name: '=HYPERLINK("https://example.invalid")' },
+      "csv",
+    );
+    expect(report.content).toContain("'=HYPERLINK");
+    expect(report.content).not.toContain("\r\n=HYPERLINK");
+  });
 });

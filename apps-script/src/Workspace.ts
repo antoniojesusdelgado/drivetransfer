@@ -15,10 +15,10 @@ namespace DriveTransferRuntime {
 
   function requireWorkspaceJob(job: WorkspaceJobRecord): WorkspaceJobRecord {
     requireOpaqueId(job?.id);
+    requireSafeText(job?.name, 120);
+    requireSafeText(job?.sourceLabel, 255);
+    requireSafeText(job?.destinationLabel, 255);
     if (
-      typeof job.name !== "string" ||
-      job.name.length < 1 ||
-      job.name.length > 120 ||
       !["transfer", "dry_run", "sync"].includes(job.kind) ||
       (job.command !== "copy" && job.command !== "move") ||
       ![
@@ -51,11 +51,9 @@ namespace DriveTransferRuntime {
     requireOpaqueId(schedule?.id);
     requireDriveId(schedule.sourceFolderId);
     requireDriveId(schedule.destinationFolderId);
+    requireSafeText(schedule?.name, 80);
     if (
       schedule.sourceFolderId === schedule.destinationFolderId ||
-      typeof schedule.name !== "string" ||
-      schedule.name.length < 1 ||
-      schedule.name.length > 80 ||
       !["transfer", "sync"].includes(schedule.kind) ||
       !["once", "daily", "weekly", "monthly"].includes(schedule.frequency) ||
       !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(schedule.timeOfDay) ||
@@ -67,15 +65,26 @@ namespace DriveTransferRuntime {
       schedule.filters.nameIncludes.length > 200 ||
       !Array.isArray(schedule.filters.extensions) ||
       schedule.filters.extensions.length > 50 ||
+      schedule.filters.extensions.some(
+        (extension) =>
+          typeof extension !== "string" ||
+          extension.length > 32 ||
+          /[^a-z0-9_-]/i.test(extension),
+      ) ||
       !Array.isArray(schedule.filters.kinds) ||
       schedule.filters.kinds.some(
         (kind) => kind !== "folder" && kind !== "file",
       ) ||
       !Array.isArray(schedule.filters.excludedPaths) ||
       schedule.filters.excludedPaths.length > 100 ||
-      schedule.filters.excludedPaths.some(
-        (path) => typeof path !== "string" || path.length > 2048,
-      ) ||
+      schedule.filters.excludedPaths.some((path) => {
+        try {
+          requireRelativePath(path);
+          return false;
+        } catch {
+          return true;
+        }
+      }) ||
       !["all", "new", "new_or_modified"].includes(schedule.filters.changeMode)
     ) {
       throw new Error("INVALID_TRANSFER_REQUEST");

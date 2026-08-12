@@ -3,7 +3,8 @@ import type { HistoryEntry, StoredJobManifest } from "./types";
 export type ReportFormat = "json" | "csv";
 
 function csvCell(value: string | number): string {
-  const text = String(value);
+  const raw = String(value);
+  const text = /^[\t\r ]*[=+\-@]/.test(raw) ? `'${raw}` : raw;
   return /[",\r\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
 }
 
