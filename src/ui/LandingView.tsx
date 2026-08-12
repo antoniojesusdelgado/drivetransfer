@@ -1,6 +1,7 @@
 import { ArrowRight, FolderSimple } from "@phosphor-icons/react";
 import googleMark from "../assets/google-g.svg";
 import heroTransfer from "../assets/hero-transfer.png";
+import { AiTransparencyMark } from "./AiTransparencyMark";
 import { Brand } from "./Brand";
 
 interface LandingViewProps {
@@ -85,6 +86,7 @@ export function LandingView({
               © 2026 Antonio Jesús Delgado Briones. Todos los derechos
               reservados.
             </small>
+            <AiTransparencyMark />
           </div>
         </div>
 

@@ -1,0 +1,10 @@
+{
+  "name": "DriveTransfer",
+  "short_name": "DriveTransfer",
+  "description": "Elige, revisa y transfiere tus archivos de Google Drive con tranquilidad.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbfaf5",
+  "theme_color": "#fbfaf5",
+  "lang": "es"
+}

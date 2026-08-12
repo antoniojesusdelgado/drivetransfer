@@ -15,6 +15,13 @@ const root = document.getElementById("root");
 if (!root) throw new Error("Application root not found");
 
 const pathname = window.location.pathname.replace(/\/$/, "") || "/";
+const canonicalUrl = new URL(pathname, "https://drivetransfer.app").href;
+document
+  .querySelector<HTMLLinkElement>('link[rel="canonical"]')
+  ?.setAttribute("href", canonicalUrl);
+document
+  .querySelector<HTMLMetaElement>('meta[property="og:url"]')
+  ?.setAttribute("content", canonicalUrl);
 const content = legalRoutes.has(pathname as LegalRoute) ? (
   <LegalPage route={pathname as LegalRoute} />
 ) : (

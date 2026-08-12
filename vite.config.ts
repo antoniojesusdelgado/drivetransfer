@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     base: "./",
+    publicDir: isAppsScript ? false : "public",
     plugins: [react(), ...(isAppsScript ? [viteSingleFile()] : [])],
     server: {
       host: "0.0.0.0",

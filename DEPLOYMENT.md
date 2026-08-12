@@ -6,15 +6,15 @@ Utiliza una cuenta y carpetas dedicadas exclusivamente a pruebas.
 
 1. Crea un proyecto Cloud estándar.
 2. Activa Google Drive API, Google Picker API y Google Apps Script API.
-3. Configura la pantalla de consentimiento OAuth como aplicación externa en modo de prueba.
+3. Configura la pantalla de consentimiento OAuth como aplicación externa y mantenla en modo de prueba hasta que Google apruebe los permisos restringidos.
 4. Añade únicamente cuentas de desarrollo como usuarios de prueba.
 5. Declara `https://www.googleapis.com/auth/drive`.
 6. Crea un OAuth Client ID de tipo Web application.
-7. Añade `http://localhost:5173` como origen JavaScript autorizado.
+7. Añade `http://localhost:5173` y `https://drivetransfer.app` como orígenes JavaScript autorizados.
 
 ## Google Picker
 
-Crea una API key limitada a Google Picker API. Restringe sus HTTP referrers a `http://localhost:5173/*` y, cuando exista, al hostname público exacto. La clave se entrega al navegador por requisito de Picker, pero no concede acceso a Drive por sí sola.
+Crea una API key limitada a Google Picker API. Restringe sus HTTP referrers a `http://localhost:5173/*` y `https://drivetransfer.app/*`. La clave se entrega al navegador por requisito de Picker, pero no concede acceso a Drive por sí sola.
 
 ## Apps Script
 
@@ -60,7 +60,7 @@ analítica desde el panel de privacidad.
 8. Crea una programación y comprueba que solo exista un trigger dispatcher por usuario.
 9. Verifica la reanudación desde otro navegador con la misma cuenta y la limpieza del historial de más de 90 días.
 
-La publicación, el dominio y la apertura del consentimiento OAuth a usuarios externos quedan fuera de esta fase.
+El dominio canónico es `https://drivetransfer.app`. La apertura del consentimiento OAuth a usuarios externos depende de la verificación de Google y de cualquier evaluación de seguridad exigida para los permisos restringidos.
 
 ## Pruebas de continuidad
 

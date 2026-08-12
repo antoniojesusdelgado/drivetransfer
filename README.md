@@ -1,5 +1,7 @@
 # DriveTransfer
 
+**Versión 1.0.0** · [drivetransfer.app](https://drivetransfer.app)
+
 DriveTransfer es una recreación técnica personal, gratuita y no comercial,
 desarrollada desde cero para portfolio. No contiene código, documentos, datos,
 procedimientos internos ni activos de empleadores o clientes, y no está
@@ -62,3 +64,12 @@ npm audit --audit-level=moderate
 No incluyas credenciales, tokens, nombres reales, IDs de carpetas ni documentos privados en el repositorio, pruebas o capturas. Las variables `VITE_*` son identificadores públicos del cliente web; la API key debe limitarse por HTTP referrer y exclusivamente a Google Picker API.
 
 La aplicación publica información para usuarios en `/privacidad`, `/procedencia-datos` y `/aviso-legal`. Revisa esos textos cuando cambien los permisos, los proveedores, la conservación o las funciones de DriveTransfer.
+
+## Desarrollo asistido por IA
+
+El proyecto se desarrolló con asistencia de OpenAI Codex mediante el entorno
+ChatGPT/Codex, bajo dirección, revisión y responsabilidad humana. Codex no forma
+parte de la aplicación en ejecución y ningún archivo, metadato, identificador o
+token de los usuarios se envía a OpenAI. Consulta
+`THIRD_PARTY_NOTICES.md` para la procedencia del distintivo europeo utilizado
+voluntariamente como medida de transparencia.

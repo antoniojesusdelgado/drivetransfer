@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export type ConsentState = "pending" | "accepted" | "rejected";
 
 export interface PrivacyPreferences {
-  readonly version: 1;
+  readonly version: 2;
   readonly analytics: boolean;
   readonly decidedAt: string;
 }
@@ -16,7 +16,7 @@ export interface DataDeletionSummary {
 }
 
 const PREFERENCES_KEY = "driveTransfer.privacyPreferences";
-const CONSENT_VERSION = 1;
+const CONSENT_VERSION = 2;
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ?? "";
 
 declare global {

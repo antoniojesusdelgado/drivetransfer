@@ -25,6 +25,7 @@ describe("privacy preferences", () => {
     expect(
       window.localStorage.getItem("driveTransfer.privacyPreferences"),
     ).toContain('"analytics":false');
+    expect(preferences.version).toBe(2);
   });
 
   it("clears DriveTransfer keys but preserves unrelated storage", () => {

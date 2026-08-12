@@ -1,6 +1,7 @@
 # Security and system validation
 
 Date: 2026-08-12
+Release: 1.0.0
 
 ## Scope
 
@@ -49,11 +50,15 @@ operations server-side.
 - Formatting: passed.
 - ESLint: passed.
 - TypeScript: passed.
-- Vitest: 15 files and 41 tests passed.
+- Vitest: 15 files and 42 tests passed.
 - Web and Apps Script production builds: passed.
 - Apps Script artifact verification: passed.
 - npm dependency audit (production and complete tree): 0 known vulnerabilities.
-- Secret-pattern and dangerous-DOM scan: no matches.
+- Secret-name, token-leak and dangerous-DOM scan: no matches.
+- No tracked environment, credential, secret or token files were found.
+- Official EU guidance was checked before publication: the transparency icon is
+  optional in this human-reviewed, editorially controlled context and is not
+  represented as an EU certification.
 - Browser smoke test at 390, 768, 1024 and 1488 px: no horizontal overflow,
   page errors or console errors.
 - Job cards at all tested widths: no shadow bands between cards.
