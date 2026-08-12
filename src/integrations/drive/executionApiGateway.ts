@@ -1,12 +1,19 @@
 import type {
   DriveFolderSummary,
+  DriveCapacitySummary,
   DriveRuntimeGateway,
   ExecuteBatchRequest,
   ExecuteBatchResponse,
   FolderPageRequest,
   FolderPageResponse,
+  PersistedTransferJob,
+  JobControlAction,
+  TransferScheduleRecord,
+  TransferFavorite,
   VerifyBatchRequest,
   VerifyBatchResponse,
+  WorkspaceJobRecord,
+  WorkspaceSnapshot,
 } from "./types";
 
 interface ExecutionError {
@@ -32,6 +39,8 @@ function safeExecutionError(response: ExecutionResponse<unknown>): Error {
     "INVALID_DRIVE_REFERENCE",
     "INVALID_TRANSFER_REQUEST",
     "MOVE_CONFIRMATION_REQUIRED",
+    "INVALID_JOB_TRANSITION",
+    "UNKNOWN_STORAGE_SCHEMA",
     "DRIVE_RATE_LIMITED",
     "DRIVE_NOT_FOUND",
     "DRIVE_PERMISSION_DENIED",
@@ -85,11 +94,44 @@ export function createExecutionApiGateway(input: {
   return {
     inspectFolder: (folderId) =>
       invoke<DriveFolderSummary>("inspectDriveFolder", { folderId }),
+    inspectCapacity: () =>
+      invoke<DriveCapacitySummary>("inspectDriveCapacity", {}),
     listFolderPage: (request: FolderPageRequest) =>
       invoke<FolderPageResponse>("listDriveFolderPage", request),
     executeBatch: (request: ExecuteBatchRequest) =>
       invoke<ExecuteBatchResponse>("executeTransferBatch", request),
     verifyBatch: (request: VerifyBatchRequest) =>
       invoke<VerifyBatchResponse>("verifyTransferBatch", request),
+    listFavorites: () =>
+      invoke<readonly TransferFavorite[]>("listTransferFavorites", {}),
+    saveFavorite: (favorite: TransferFavorite) =>
+      invoke<TransferFavorite>("saveTransferFavorite", favorite),
+    deleteFavorite: (favoriteId: string) =>
+      invoke<{ readonly ok: true }>("deleteTransferFavorite", {
+        favoriteId,
+      }).then(() => undefined),
+    saveJob: (snapshot: PersistedTransferJob) =>
+      invoke<PersistedTransferJob>("saveTransferJob", snapshot),
+    loadJob: (jobId: string) =>
+      invoke<PersistedTransferJob | null>("loadTransferJob", { jobId }),
+    loadLatestJob: () =>
+      invoke<PersistedTransferJob | null>("loadLatestTransferJob", {}),
+    clearJob: (jobId: string) =>
+      invoke<{ readonly ok: true }>("clearTransferJob", { jobId }).then(
+        () => undefined,
+      ),
+    loadWorkspace: () => invoke<WorkspaceSnapshot>("loadTransferWorkspace", {}),
+    saveWorkspaceJob: (job: WorkspaceJobRecord) =>
+      invoke<WorkspaceJobRecord>("saveWorkspaceJob", job),
+    controlWorkspaceJob: (jobId: string, action: JobControlAction) =>
+      invoke<WorkspaceSnapshot>("controlWorkspaceJob", { jobId, action }),
+    saveSchedule: (schedule: TransferScheduleRecord) =>
+      invoke<TransferScheduleRecord>("saveTransferSchedule", schedule),
+    deleteSchedule: (scheduleId: string) =>
+      invoke<{ readonly ok: true }>("deleteTransferSchedule", {
+        scheduleId,
+      }).then(() => undefined),
+    runScheduleNow: (scheduleId: string) =>
+      invoke<WorkspaceSnapshot>("runTransferScheduleNow", { scheduleId }),
   };
 }

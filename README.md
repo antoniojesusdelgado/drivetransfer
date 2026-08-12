@@ -11,6 +11,15 @@ DriveTransfer ayuda a elegir, revisar y transferir archivos entre carpetas de Go
 - Copia predeterminada y confirmación adicional para mover.
 - Progreso pausable, reintentos seguros e informe final sin identificadores internos.
 
+- Comprobación previa de volumen, permisos, conflictos y tiempo estimado.
+- Reglas de duplicados para omitir, conservar ambos o detenerse a revisar.
+- Rutas favoritas privadas, reanudación durante siete días y avisos al terminar.
+- Reintento exclusivo de los elementos fallidos sin repetir los completados.
+- Centro privado con trabajos activos, en cola, pausados y terminados.
+- Modo «Solo comprobar», filtros combinables y resolución individual o masiva de conflictos.
+- Programaciones únicas, diarias, semanales y mensuales para copias y sincronizaciones conservadoras.
+- Historial privado de 90 días e informes JSON/CSV sin identificadores internos.
+
 ## Arquitectura
 
 El frontend React/Vite se carga de forma independiente. Cuando una persona conecta Google, conserva el token de acceso únicamente en memoria y llama a un ejecutable de Apps Script mediante `scripts.run`. Apps Script vuelve a validar cada solicitud y ejecuta Drive API v3 con los permisos de esa persona.

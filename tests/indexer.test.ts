@@ -82,9 +82,23 @@ describe("Drive recursive indexer", () => {
     );
     const gateway: DriveRuntimeGateway = {
       inspectFolder: vi.fn(),
+      inspectCapacity: vi.fn(),
       listFolderPage,
       executeBatch: vi.fn(),
       verifyBatch: vi.fn(),
+      listFavorites: vi.fn(),
+      saveFavorite: vi.fn(),
+      deleteFavorite: vi.fn(),
+      saveJob: vi.fn(),
+      loadJob: vi.fn(),
+      loadLatestJob: vi.fn(),
+      clearJob: vi.fn(),
+      loadWorkspace: vi.fn(),
+      saveWorkspaceJob: vi.fn(),
+      controlWorkspaceJob: vi.fn(),
+      saveSchedule: vi.fn(),
+      deleteSchedule: vi.fn(),
+      runScheduleNow: vi.fn(),
     };
 
     let session = createDriveIndexSession(root);

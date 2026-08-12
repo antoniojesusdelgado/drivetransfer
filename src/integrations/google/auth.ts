@@ -1,5 +1,10 @@
 const GOOGLE_IDENTITY_SCRIPT_ID = "google-identity-services";
-const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive";
+const GOOGLE_SCOPES = [
+  "https://www.googleapis.com/auth/drive",
+  "https://www.googleapis.com/auth/userinfo.email",
+  "https://www.googleapis.com/auth/script.send_mail",
+  "https://www.googleapis.com/auth/script.scriptapp",
+].join(" ");
 
 interface TokenResponse {
   readonly access_token?: string;
@@ -89,7 +94,7 @@ export async function requestGoogleSession(
   return new Promise((resolve, reject) => {
     const tokenClient = oauth.initTokenClient({
       client_id: clientId,
-      scope: DRIVE_SCOPE,
+      scope: GOOGLE_SCOPES,
       callback: (response) => {
         if (response.error || !response.access_token) {
           reject(new Error("GOOGLE_AUTH_DENIED"));

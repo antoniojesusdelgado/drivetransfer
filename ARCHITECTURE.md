@@ -33,6 +33,24 @@ Las copias creadas por la aplicación reciben `appProperties.driveTransferOperat
 
 Los límites temporales producen un estado reintentable. Pausar impide enviar lotes nuevos; una llamada ya iniciada termina de forma segura. Cancelar o cerrar la página no intenta revertir cambios completados.
 
+## Preferencias y continuidad
+
+Antes de ejecutar, el plan calcula archivos, carpetas, tamaño conocido, bloqueos y una estimación orientativa. Los duplicados pueden omitirse, conservarse con un nombre nuevo o detenerse para revisión; nunca se reemplazan silenciosamente.
+
+`DriveRuntimeGateway` también expone favoritos y recuperación de trabajos. Las rutas favoritas y el estado mínimo de reanudación se guardan en `UserProperties`, separados por usuario. Los trabajos se dividen en fragmentos, se limitan a 5.000 selecciones, caducan tras siete días y se eliminan al completar o descartar.
+
+El navegador conserva únicamente el identificador opaco del trabajo. No guarda tokens, nombres ni IDs de Drive. Los avisos de finalización utilizan el permiso estándar del navegador y solo se solicitan cuando la persona los activa.
+
+## Persistencia, cola y programaciones
+
+El gateway también expone favoritos, centro de trabajos, programaciones, historial y recuperación. Los documentos privados se guardan versionados en appDataFolder; manifiesto, selección y checkpoints permanecen separados. UserProperties conserva únicamente índices pequeños, la versión del esquema y el identificador del trigger. La migración del formato anterior borra el original solo después de escribir y verificar la copia.
+
+Solo puede existir un trabajo en curso por usuario; el resto permanece en una cola ordenada. Un único trigger periódico por usuario activa el dispatcher, que usa LockService.getUserLock() para evitar carreras. Los trabajos extensos conservan checkpoints privados y continúan en ejecuciones posteriores.
+
+Las programaciones admiten una ejecución, frecuencia diaria, semanal o mensual. Solo crean copias o sincronizaciones: mover continúa siendo una acción interactiva con confirmación reforzada. La sincronización es unidireccional y conservadora; añade archivos nuevos y crea una copia fechada de los modificados, sin retirar ni sustituir contenido del destino.
+
+El historial se conserva durante 90 días y se poda automáticamente. Los avisos por correo son opcionales, se envían únicamente a la cuenta activa y la dirección no se persiste.
+
 ## Movimiento entre espacios
 
 Los archivos compatibles se mueven actualizando sus padres. Una carpeta no puede pasar de My Drive a una unidad compartida mediante un único cambio de padre, por lo que se reconstruye el destino, se procesan primero los descendientes y solo se retira la carpeta de origen si ha quedado vacía. Si permanece cualquier elemento, el origen se conserva y el resultado requiere atención.

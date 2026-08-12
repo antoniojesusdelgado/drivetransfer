@@ -38,6 +38,14 @@ function executeOperation(
     };
   }
 
+  if (operation.decision === "rename_duplicate") {
+    return {
+      operationKey: operation.operationKey,
+      result: operation.command === "copy" ? "copied" : "moved",
+      attempts,
+    };
+  }
+
   if (operation.decision === "reuse_folder") {
     return {
       operationKey: operation.operationKey,
@@ -114,4 +122,15 @@ export function setJobStatus(
   status: TransferJobStatus,
 ): TransferJob {
   return { ...job, status };
+}
+
+export function retryFailedOperations(job: TransferJob): TransferJob {
+  const checkpoints = Object.fromEntries(
+    Object.entries(job.checkpoints).filter(
+      ([, checkpoint]) =>
+        checkpoint.result !== "failed_retryable" &&
+        checkpoint.result !== "failed_terminal",
+    ),
+  );
+  return { ...job, status: "running", checkpoints };
 }

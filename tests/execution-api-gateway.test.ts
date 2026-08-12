@@ -59,6 +59,41 @@ describe("Apps Script execution API gateway", () => {
     );
   });
 
+  it("uses explicit private-storage operations for resumable jobs", async () => {
+    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body)) as {
+        function: string;
+        parameters: readonly unknown[];
+      };
+      expect(body.function).toBe("saveTransferJob");
+      expect(String(_url)).not.toContain("folder-source-123");
+      return new Response(
+        JSON.stringify({
+          done: true,
+          response: { result: body.parameters[0] },
+        }),
+        { status: 200 },
+      );
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const gateway = createExecutionApiGateway({
+      accessToken: "test-token",
+      deploymentId: "deployment-123",
+    });
+    const snapshot = {
+      jobId: "job_plan_123",
+      sourceFolderId: "folder-source-123",
+      destinationFolderId: "folder-target-123",
+      command: "copy" as const,
+      duplicatePolicy: "skip" as const,
+      selectedIds: ["source-item-123"],
+      checkpoints: [],
+      updatedAt: "2026-08-11T00:00:00.000Z",
+    };
+
+    await expect(gateway.saveJob(snapshot)).resolves.toEqual(snapshot);
+  });
+
   it("retries a temporary quota response before succeeding", async () => {
     vi.useFakeTimers();
     const fetchMock = vi

@@ -20,6 +20,8 @@
 - Mobile image-background comparison: `artifacts/design-qa/comparison-mobile-image-background.png`
 - Mobile vertical-balance correction: `artifacts/design-qa/landing-mobile-balanced.png`
 - Mobile vertical-balance comparison: `artifacts/design-qa/comparison-mobile-vertical-balance.png`
+- Full-flow responsive audit before fixes: `artifacts/responsive-audit/before/`
+- Full-flow responsive audit after fixes: `artifacts/responsive-audit/after/`
 
 ## Comparison history
 
@@ -29,6 +31,7 @@
 4. Mobile density pass: reduced the illustration and vertical spacing below `540px`, kept both actions prominent and arranged the three explanatory steps in a compact row.
 5. Mobile image pass: the reduced illustration exposed the raster's rectangular background. Replacing the mobile-only multiply blend with darken integrates the asset into the page while leaving the desktop rendering unchanged.
 6. Mobile height pass: tall mobile viewports left excessive empty space below the steps. Height-aware spacing now distributes that space around the composition while preserving the compact, scroll-free layout on shorter screens.
+7. Full-flow responsive pass: removed page-level overflow from selection and review, stacked the intermediate layout at `1024px`, converted the review table into mobile cards and made progress actions full-width on narrow screens.
 
 ## Final visual review
 
@@ -45,11 +48,18 @@
 ## Interaction and responsive checks
 
 - Complete exploration flow checked: selection, review, confirmation, progress, pause, resume and result.
+- Selection and review align to one content axis at `390`, `768`, `1024` and `1488` px; no child crosses the viewport at those widths.
+- Review uses compact, labelled cards below `540px` instead of requiring horizontal table scrolling.
+- Source and destination remain side-by-side on tablet and stack on mobile; progress controls stack only where space is limited.
 - Move action checked: execution remains disabled until the explicit confirmation is selected.
 - Missing Google configuration checked: a user-facing message is shown and exploration remains available.
 - Browser console: no errors or warnings during the checked flow.
 - Horizontal overflow: none at `390`, `768`, `1024` or `1488` px.
 - Mobile scroll: none at `375 x 667`, `390 x 700`, `390 x 844` or `520 x 844`.
 - Reduced motion: supported through `prefers-reduced-motion`.
+
+- Workspace navigation, transfer center, schedules and history checked at 390, 768, 1024 and 1488 px.
+- The mobile virtualized job cards use breakpoint-aware row heights; no overlap remains at 390 px.
+- The new workspace views produced no browser console errors or warnings.
 
 final result: passed

@@ -35,6 +35,8 @@ namespace DriveTransferRuntime {
       kind: itemKind(file),
       mimeType: file.mimeType,
       size: file.size ? Number(file.size) : undefined,
+      modifiedTime: file.modifiedTime,
+      md5Checksum: file.md5Checksum,
       driveId: file.driveId,
       space: file.driveId ? "shared_drive" : "my_drive",
       shortcutTargetId: file.shortcutDetails?.targetId,
@@ -117,6 +119,161 @@ namespace DriveTransferRuntime {
       `'${escapeDriveQueryValue(parentId)}' in parents and name = '${escapeDriveQueryValue(name)}' and mimeType = '${FOLDER_MIME_TYPE}'`,
       driveId,
     )[0];
+  }
+
+  function scheduledOperationKey(value: string): string {
+    const digest = Utilities.computeDigest(
+      Utilities.DigestAlgorithm.SHA_256,
+      value,
+      Utilities.Charset.UTF_8,
+    );
+    return (
+      "op_" +
+      Utilities.base64EncodeWebSafe(digest).replace(/=+$/g, "").slice(0, 48)
+    );
+  }
+
+  function existingDestinationFile(
+    destinationFolderId: string,
+    relativePath: string,
+    name: string,
+  ): DriveFile | undefined {
+    let folder = getFile(destinationFolderId, "id,driveId");
+    if (!folder.id) throw new Error("DRIVE_NOT_FOUND");
+    for (const segment of requireRelativePath(relativePath)
+      .split("/")
+      .filter(Boolean)) {
+      const child = findFolder(folder.id as string, segment, folder.driveId);
+      if (!child) return undefined;
+      folder = child;
+    }
+    return findFiles(
+      "'" +
+        escapeDriveQueryValue(folder.id as string) +
+        "' in parents and name = '" +
+        escapeDriveQueryValue(name) +
+        "'",
+      folder.driveId,
+      "files(id,name,mimeType,size,modifiedTime,md5Checksum,driveId)",
+    ).find((item) => item.mimeType !== FOLDER_MIME_TYPE);
+  }
+
+  function safeScheduledName(
+    destinationFolderId: string,
+    relativePath: string,
+    name: string,
+    stamp?: string,
+  ): string {
+    const extensionIndex = name.lastIndexOf(".");
+    const stem = extensionIndex <= 0 ? name : name.slice(0, extensionIndex);
+    const extension = extensionIndex <= 0 ? "" : name.slice(extensionIndex);
+    for (let index = 1; index < 1000; index += 1) {
+      const suffix = stamp
+        ? " (" + stamp + (index === 1 ? "" : " " + index) + ")"
+        : index === 1
+          ? " (copia)"
+          : " (copia " + index + ")";
+      const candidate = stem + suffix + extension;
+      if (
+        !existingDestinationFile(destinationFolderId, relativePath, candidate)
+      )
+        return candidate;
+    }
+    throw new Error("DRIVE_REQUEST_FAILED");
+  }
+
+  export function prepareScheduledOperation(
+    schedule: TransferScheduleRecord,
+    item: IndexedDriveItem,
+    relativePath: string,
+  ): RuntimeTransferOperation | null {
+    const normalizedName = item.name.toLocaleLowerCase();
+    const extension = normalizedName.includes(".")
+      ? normalizedName.slice(normalizedName.lastIndexOf(".") + 1)
+      : "";
+    if (
+      !schedule.filters.kinds.includes(
+        item.kind === "folder" ? "folder" : "file",
+      ) ||
+      (schedule.filters.nameIncludes &&
+        normalizedName.indexOf(
+          schedule.filters.nameIncludes.toLocaleLowerCase(),
+        ) < 0) ||
+      (schedule.filters.extensions.length > 0 &&
+        item.kind !== "folder" &&
+        !schedule.filters.extensions
+          .map((value) => value.toLocaleLowerCase())
+          .includes(extension)) ||
+      (schedule.filters.minSize !== undefined &&
+        (item.size ?? 0) < schedule.filters.minSize) ||
+      (schedule.filters.maxSize !== undefined &&
+        item.size !== undefined &&
+        item.size > schedule.filters.maxSize) ||
+      (schedule.filters.modifiedAfter &&
+        (!item.modifiedTime ||
+          item.modifiedTime < schedule.filters.modifiedAfter)) ||
+      (schedule.filters.modifiedBefore &&
+        (!item.modifiedTime ||
+          item.modifiedTime > schedule.filters.modifiedBefore)) ||
+      schedule.filters.excludedPaths.some(
+        (path) =>
+          relativePath.toLocaleLowerCase().indexOf(path.toLocaleLowerCase()) ===
+          0,
+      )
+    )
+      return null;
+    const existing =
+      item.kind === "file"
+        ? existingDestinationFile(
+            schedule.destinationFolderId,
+            relativePath,
+            item.name,
+          )
+        : undefined;
+    if (existing && schedule.filters.changeMode === "new") return null;
+    let targetName: string | undefined;
+    if (existing && schedule.kind === "sync") {
+      const unchanged =
+        item.md5Checksum && existing.md5Checksum
+          ? item.md5Checksum === existing.md5Checksum
+          : item.size === (existing.size ? Number(existing.size) : undefined) &&
+            item.modifiedTime === existing.modifiedTime;
+      if (unchanged) return null;
+      targetName = safeScheduledName(
+        schedule.destinationFolderId,
+        relativePath,
+        item.name,
+        new Date().toISOString().slice(0, 10),
+      );
+    } else if (existing && schedule.duplicatePolicy === "skip") {
+      return null;
+    } else if (existing && schedule.duplicatePolicy === "review") {
+      return null;
+    } else if (existing) {
+      targetName = safeScheduledName(
+        schedule.destinationFolderId,
+        relativePath,
+        item.name,
+      );
+    }
+    const keySource = [
+      schedule.id,
+      item.id,
+      relativePath,
+      targetName ?? item.name,
+    ].join("|");
+    return {
+      operationKey: scheduledOperationKey(keySource),
+      sourceId: item.id,
+      sourceParentId: item.parentId,
+      relativePath,
+      name: item.name,
+      kind: item.kind === "folder" ? "folder" : "file",
+      mimeType: item.mimeType,
+      size: item.size,
+      sourceSpace: item.space,
+      targetName,
+    };
   }
 
   function ensureDestinationPath(
@@ -213,6 +370,7 @@ namespace DriveTransferRuntime {
     ) {
       throw new Error("INVALID_TRANSFER_REQUEST");
     }
+    const targetName = operation.targetName ?? source.name;
     const actualSourceSpace = source.driveId ? "shared_drive" : "my_drive";
     if (actualSourceSpace !== operation.sourceSpace) {
       throw new Error("INVALID_TRANSFER_REQUEST");
@@ -289,7 +447,10 @@ namespace DriveTransferRuntime {
     }
 
     if (request.command === "copy") {
-      if (exactDuplicate(targetPath.id, source, destination.driveId)) {
+      if (
+        targetName === source.name &&
+        exactDuplicate(targetPath.id, source, destination.driveId)
+      ) {
         return {
           operationKey: operation.operationKey,
           result: "skipped_duplicate",
@@ -298,7 +459,7 @@ namespace DriveTransferRuntime {
       }
       const copy = requireDriveService().Files.copy(
         {
-          name: source.name,
+          name: targetName,
           parents: [targetPath.id],
           appProperties: {
             ...(source.appProperties ?? {}),
@@ -326,6 +487,7 @@ namespace DriveTransferRuntime {
     }
     updateMetadataFile(
       {
+        name: targetName,
         appProperties: {
           ...(source.appProperties ?? {}),
           driveTransferOperationKey: operation.operationKey,
@@ -371,6 +533,30 @@ namespace DriveTransferRuntime {
     }
   }
 
+  export function inspectCapacity(): DriveCapacitySummary {
+    try {
+      const about = requireDriveService().About.get({
+        fields: "storageQuota(limit,usage)",
+      });
+      const limit = about.storageQuota?.limit
+        ? Number(about.storageQuota.limit)
+        : undefined;
+      const usage = about.storageQuota?.usage
+        ? Number(about.storageQuota.usage)
+        : undefined;
+      return {
+        limit,
+        usage,
+        remaining:
+          limit !== undefined && usage !== undefined
+            ? Math.max(0, limit - usage)
+            : undefined,
+      };
+    } catch (error) {
+      throw asSafeRuntimeError(error);
+    }
+  }
+
   export function listFolderPage(
     request: ListFolderPageRequest,
   ): ListFolderPageResponse {
@@ -388,7 +574,7 @@ namespace DriveTransferRuntime {
         includeItemsFromAllDrives: true,
         orderBy: "folder,name_natural",
         fields:
-          "nextPageToken,incompleteSearch,files(id,name,mimeType,size,parents,driveId,shortcutDetails(targetId,targetMimeType),capabilities(canCopy,canMoveItemWithinDrive,canMoveItemOutOfDrive,canAddChildren))",
+          "nextPageToken,incompleteSearch,files(id,name,mimeType,size,modifiedTime,md5Checksum,parents,driveId,shortcutDetails(targetId,targetMimeType),capabilities(canCopy,canMoveItemWithinDrive,canMoveItemOutOfDrive,canAddChildren))",
       };
       if (driveId) {
         options.corpora = "drive";

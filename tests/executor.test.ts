@@ -4,6 +4,7 @@ import {
   createTransferJob,
   processNextBatch,
   setJobStatus,
+  retryFailedOperations,
 } from "../src/domain/executor";
 import { buildTransferPlan } from "../src/domain/planner";
 
@@ -34,5 +35,31 @@ describe("resumable execution", () => {
     expect(
       completedKey ? resumed.checkpoints[completedKey]?.attempts : undefined,
     ).toBe(firstAttempts);
+  });
+
+  it("retries only failed operations and preserves completed checkpoints", () => {
+    const plan = buildTransferPlan({
+      tree: syntheticSourceTree,
+      selectedIds: new Set(["file-b", "file-denied"]),
+      destination: syntheticDestination,
+      destinationSpace: "shared_drive",
+      command: "copy",
+    });
+    const job = processNextBatch(
+      setJobStatus(createTransferJob(plan), "running"),
+      10,
+    );
+    const completedBefore = Object.values(job.checkpoints).find(
+      ({ result }) => result === "copied",
+    );
+
+    const retry = retryFailedOperations(job);
+
+    expect(retry.checkpoints[completedBefore!.operationKey]).toEqual(
+      completedBefore,
+    );
+    expect(Object.values(retry.checkpoints)).not.toContainEqual(
+      expect.objectContaining({ result: "failed_terminal" }),
+    );
   });
 });

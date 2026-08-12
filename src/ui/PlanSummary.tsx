@@ -5,11 +5,13 @@ import {
   WarningCircle,
 } from "@phosphor-icons/react";
 import type { TransferPlan } from "../domain/types";
+import { VirtualList } from "./VirtualList";
 
 const decisionLabels = {
   transfer: "Se transferirá",
   reuse_folder: "Carpeta ya disponible",
   skip_duplicate: "Ya existe",
+  rename_duplicate: "Se conservarán ambos",
   blocked: "Sin permiso",
 } as const;
 
@@ -19,11 +21,21 @@ export function PlanSummary({ plan }: { readonly plan: TransferPlan }) {
       ...result,
       [operation.decision]: result[operation.decision] + 1,
     }),
-    { transfer: 0, reuse_folder: 0, skip_duplicate: 0, blocked: 0 },
+    {
+      transfer: 0,
+      reuse_folder: 0,
+      skip_duplicate: 0,
+      rename_duplicate: 0,
+      blocked: 0,
+    },
   );
 
   const metrics = [
-    { label: "Preparados", value: counts.transfer, icon: CheckCircle },
+    {
+      label: "Preparados",
+      value: counts.transfer + counts.rename_duplicate,
+      icon: CheckCircle,
+    },
     {
       label: "Carpetas disponibles",
       value: counts.reuse_folder,
@@ -52,6 +64,26 @@ export function PlanSummary({ plan }: { readonly plan: TransferPlan }) {
           </div>
         ))}
       </dl>
+      {plan.operations.length > 500 ? (
+        <VirtualList
+          items={plan.operations}
+          itemHeight={58}
+          height={520}
+          getKey={(operation) => operation.operationKey}
+          ariaLabel="Resultado previsto por archivo"
+          renderItem={(operation) => (
+            <div className="plan-virtual-row">
+              <span>{operation.item.name}</span>
+              <small>
+                {operation.item.kind === "folder" ? "Carpeta" : "Archivo"}
+              </small>
+              <span className={"status status--" + operation.decision}>
+                {decisionLabels[operation.decision]}
+              </span>
+            </div>
+          )}
+        />
+      ) : null}
       <div className="table-wrap">
         <table>
           <thead>
@@ -62,19 +94,21 @@ export function PlanSummary({ plan }: { readonly plan: TransferPlan }) {
             </tr>
           </thead>
           <tbody>
-            {plan.operations.map((operation) => (
-              <tr key={operation.operationKey}>
-                <td>{operation.item.name}</td>
-                <td>
-                  {operation.item.kind === "folder" ? "Carpeta" : "Archivo"}
-                </td>
-                <td>
-                  <span className={`status status--${operation.decision}`}>
-                    {decisionLabels[operation.decision]}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {(plan.operations.length > 500 ? [] : plan.operations).map(
+              (operation) => (
+                <tr key={operation.operationKey}>
+                  <td data-label="Archivo o carpeta">{operation.item.name}</td>
+                  <td data-label="Tipo">
+                    {operation.item.kind === "folder" ? "Carpeta" : "Archivo"}
+                  </td>
+                  <td data-label="Resultado previsto">
+                    <span className={`status status--${operation.decision}`}>
+                      {decisionLabels[operation.decision]}
+                    </span>
+                  </td>
+                </tr>
+              ),
+            )}
           </tbody>
         </table>
       </div>

@@ -4,6 +4,7 @@ namespace DriveTransferRuntime {
   const OPAQUE_ID_PATTERN = /^(job|plan|op)_[a-z0-9_-]{1,160}$/i;
   const MAX_BATCH_SIZE = 10;
   const MAX_PATH_LENGTH = 2048;
+  const MAX_PERSISTED_SELECTION = 5000;
 
   export function requireDriveId(value: unknown): string {
     if (typeof value !== "string" || !DRIVE_ID_PATTERN.test(value)) {
@@ -90,7 +91,11 @@ namespace DriveTransferRuntime {
         operation.name.length > 1024 ||
         (operation.kind !== "file" && operation.kind !== "folder") ||
         typeof operation.mimeType !== "string" ||
-        operation.mimeType.length > 256
+        operation.mimeType.length > 256 ||
+        (operation.targetName !== undefined &&
+          (typeof operation.targetName !== "string" ||
+            operation.targetName.length === 0 ||
+            operation.targetName.length > 1024))
       ) {
         throw new Error("INVALID_TRANSFER_REQUEST");
       }
@@ -98,10 +103,80 @@ namespace DriveTransferRuntime {
     return request;
   }
 
+  export function requireDuplicatePolicy(
+    value: unknown,
+  ): "skip" | "rename" | "review" {
+    if (value !== "skip" && value !== "rename" && value !== "review") {
+      throw new Error("INVALID_TRANSFER_REQUEST");
+    }
+    return value;
+  }
+
+  export function requireFavorite(
+    favorite: TransferFavorite,
+  ): TransferFavorite {
+    requireOpaqueId(favorite?.id);
+    if (
+      typeof favorite?.name !== "string" ||
+      favorite.name.length === 0 ||
+      favorite.name.length > 80
+    ) {
+      throw new Error("INVALID_TRANSFER_REQUEST");
+    }
+    requireDriveId(favorite.sourceFolderId);
+    requireDriveId(favorite.destinationFolderId);
+    requireTransferCommand(favorite.command);
+    requireDuplicatePolicy(favorite.duplicatePolicy);
+    return favorite;
+  }
+
+  export function requirePersistedJob(
+    snapshot: PersistedTransferJob,
+  ): PersistedTransferJob {
+    requireOpaqueId(snapshot?.jobId);
+    requireDriveId(snapshot.sourceFolderId);
+    requireDriveId(snapshot.destinationFolderId);
+    requireTransferCommand(snapshot.command);
+    requireDuplicatePolicy(snapshot.duplicatePolicy);
+    if (
+      !Array.isArray(snapshot.selectedIds) ||
+      snapshot.selectedIds.length > MAX_PERSISTED_SELECTION ||
+      !Array.isArray(snapshot.checkpoints) ||
+      snapshot.checkpoints.length > MAX_PERSISTED_SELECTION
+    ) {
+      throw new Error("INVALID_TRANSFER_REQUEST");
+    }
+    snapshot.selectedIds.forEach(requireDriveId);
+    if (
+      typeof snapshot.updatedAt !== "string" ||
+      !Number.isFinite(new Date(snapshot.updatedAt).getTime())
+    ) {
+      throw new Error("INVALID_TRANSFER_REQUEST");
+    }
+    snapshot.checkpoints.forEach((checkpoint) => {
+      requireOpaqueId(checkpoint.operationKey);
+      if (
+        ![
+          "copied",
+          "moved",
+          "reused_folder",
+          "skipped_duplicate",
+          "failed_retryable",
+          "failed_terminal",
+        ].includes(checkpoint.result) ||
+        !Number.isFinite(checkpoint.attempts) ||
+        checkpoint.attempts < 0
+      ) {
+        throw new Error("INVALID_TRANSFER_REQUEST");
+      }
+    });
+    return snapshot;
+  }
+
   export function asSafeRuntimeError(error: unknown): Error {
     const message = error instanceof Error ? error.message : String(error);
     if (
-      /INVALID_DRIVE_REFERENCE|INVALID_PAGE_TOKEN|INVALID_TRANSFER_REQUEST|MOVE_CONFIRMATION_REQUIRED/.test(
+      /INVALID_DRIVE_REFERENCE|INVALID_PAGE_TOKEN|INVALID_TRANSFER_REQUEST|INVALID_JOB_TRANSITION|UNKNOWN_STORAGE_SCHEMA|MOVE_CONFIRMATION_REQUIRED/.test(
         message,
       )
     ) {

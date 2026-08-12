@@ -18,6 +18,9 @@
     "apps-script/src/Types.ts",
     "apps-script/src/Security.ts",
     "apps-script/src/DriveService.ts",
+    "apps-script/src/AppDataStore.ts",
+    "apps-script/src/Storage.ts",
+    "apps-script/src/Workspace.ts",
     "apps-script/src/Code.ts"
   ]
 }

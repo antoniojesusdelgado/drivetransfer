@@ -52,8 +52,14 @@ VITE_APPS_SCRIPT_DEPLOYMENT_ID=...
 5. Repite con una unidad compartida y en ambas direcciones entre espacios.
 6. Comprueba permisos limitados, duplicados, pausa, reintento y token caducado.
 7. Revisa que los registros no contengan tokens, nombres ni IDs.
+8. Crea una programación y comprueba que solo exista un trigger dispatcher por usuario.
+9. Verifica la reanudación desde otro navegador con la misma cuenta y la limpieza del historial de más de 90 días.
 
 La publicación, el dominio y la apertura del consentimiento OAuth a usuarios externos quedan fuera de esta fase.
+
+## Pruebas de continuidad
+
+Además del recorrido básico, comprueba las tres reglas de duplicados, favoritos, cierre y reanudación, descarte de un trabajo guardado, reintento selectivo y avisos del navegador. Confirma que favoritos y trabajos pertenecen únicamente a la cuenta conectada y que los registros no contienen tokens, nombres ni IDs.
 
 ## Alojamiento web
 
