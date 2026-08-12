@@ -19,26 +19,58 @@ namespace DriveTransferRuntime {
     write: 90,
     transfer: 60,
   };
+  const SCRIPT_RATE_LIMITS: Record<RateLimitBucket, number> = {
+    read: 1000,
+    write: 300,
+    transfer: 180,
+  };
   const RATE_LIMIT_WINDOW_SECONDS = 60;
 
-  export function enforceUserRateLimit(bucket: RateLimitBucket): void {
-    const cache = CacheService.getUserCache();
-    const lock = LockService.getUserLock();
+  function incrementRateLimit(
+    cache: GoogleAppsScript.Cache.Cache,
+    lock: GoogleAppsScript.Lock.Lock,
+    keyPrefix: string,
+    bucket: RateLimitBucket,
+    limit: number,
+  ): void {
     if (!lock.tryLock(2_000)) throw new Error("DRIVE_RATE_LIMITED");
     try {
       const windowId = Math.floor(
         Date.now() / (RATE_LIMIT_WINDOW_SECONDS * 1000),
       );
-      const key = `driveTransferRate_${bucket}_${windowId}`;
+      const key = `${keyPrefix}_${bucket}_${windowId}`;
       const current = Number(cache.get(key) ?? "0");
-      if (
-        !Number.isInteger(current) ||
-        current < 0 ||
-        current >= RATE_LIMITS[bucket]
-      ) {
+      if (!Number.isInteger(current) || current < 0 || current >= limit) {
         throw new Error("DRIVE_RATE_LIMITED");
       }
       cache.put(key, String(current + 1), RATE_LIMIT_WINDOW_SECONDS + 5);
+    } finally {
+      lock.releaseLock();
+    }
+  }
+
+  export function enforceUserRateLimit(bucket: RateLimitBucket): void {
+    incrementRateLimit(
+      CacheService.getUserCache(),
+      LockService.getUserLock(),
+      "driveTransferUserRate",
+      bucket,
+      RATE_LIMITS[bucket],
+    );
+    incrementRateLimit(
+      CacheService.getScriptCache(),
+      LockService.getScriptLock(),
+      "driveTransferScriptRate",
+      bucket,
+      SCRIPT_RATE_LIMITS[bucket],
+    );
+  }
+
+  export function withUserMutationLock<T>(action: () => T): T {
+    const lock = LockService.getUserLock();
+    if (!lock.tryLock(20_000)) throw new Error("DRIVE_RATE_LIMITED");
+    try {
+      return action();
     } finally {
       lock.releaseLock();
     }
@@ -178,29 +210,24 @@ namespace DriveTransferRuntime {
   export function requireFavorite(
     favorite: TransferFavorite,
   ): TransferFavorite {
-    requireOpaqueId(favorite?.id);
-    if (
-      typeof favorite?.name !== "string" ||
-      favorite.name.length === 0 ||
-      favorite.name.length > 80
-    ) {
-      throw new Error("INVALID_TRANSFER_REQUEST");
-    }
-    requireDriveId(favorite.sourceFolderId);
-    requireDriveId(favorite.destinationFolderId);
-    requireTransferCommand(favorite.command);
-    requireDuplicatePolicy(favorite.duplicatePolicy);
-    return favorite;
+    return {
+      id: requireOpaqueId(favorite?.id),
+      name: requireSafeText(favorite?.name, 80),
+      sourceFolderId: requireDriveId(favorite?.sourceFolderId),
+      destinationFolderId: requireDriveId(favorite?.destinationFolderId),
+      command: requireTransferCommand(favorite?.command),
+      duplicatePolicy: requireDuplicatePolicy(favorite?.duplicatePolicy),
+    };
   }
 
   export function requirePersistedJob(
     snapshot: PersistedTransferJob,
   ): PersistedTransferJob {
-    requireOpaqueId(snapshot?.jobId);
-    requireDriveId(snapshot.sourceFolderId);
-    requireDriveId(snapshot.destinationFolderId);
-    requireTransferCommand(snapshot.command);
-    requireDuplicatePolicy(snapshot.duplicatePolicy);
+    const jobId = requireOpaqueId(snapshot?.jobId);
+    const sourceFolderId = requireDriveId(snapshot?.sourceFolderId);
+    const destinationFolderId = requireDriveId(snapshot?.destinationFolderId);
+    const command = requireTransferCommand(snapshot?.command);
+    const duplicatePolicy = requireDuplicatePolicy(snapshot?.duplicatePolicy);
     if (
       !Array.isArray(snapshot.selectedIds) ||
       snapshot.selectedIds.length > MAX_PERSISTED_SELECTION ||
@@ -209,16 +236,18 @@ namespace DriveTransferRuntime {
     ) {
       throw new Error("INVALID_TRANSFER_REQUEST");
     }
-    snapshot.selectedIds.forEach(requireDriveId);
+    const selectedIds = [...new Set(snapshot.selectedIds.map(requireDriveId))];
     if (
       typeof snapshot.updatedAt !== "string" ||
       !Number.isFinite(new Date(snapshot.updatedAt).getTime())
     ) {
       throw new Error("INVALID_TRANSFER_REQUEST");
     }
-    snapshot.checkpoints.forEach((checkpoint) => {
-      requireOpaqueId(checkpoint.operationKey);
+    const checkpointKeys = new Set<string>();
+    const checkpoints = snapshot.checkpoints.map((checkpoint) => {
+      const operationKey = requireOpaqueId(checkpoint.operationKey);
       if (
+        checkpointKeys.has(operationKey) ||
         ![
           "copied",
           "moved",
@@ -227,13 +256,37 @@ namespace DriveTransferRuntime {
           "failed_retryable",
           "failed_terminal",
         ].includes(checkpoint.result) ||
-        !Number.isFinite(checkpoint.attempts) ||
-        checkpoint.attempts < 0
+        !Number.isInteger(checkpoint.attempts) ||
+        checkpoint.attempts < 0 ||
+        checkpoint.attempts > 100 ||
+        (checkpoint.errorCode !== undefined &&
+          ![
+            "temporary_unavailable",
+            "permission_denied",
+            "invalid_request",
+            "verification_failed",
+          ].includes(checkpoint.errorCode))
       ) {
         throw new Error("INVALID_TRANSFER_REQUEST");
       }
+      checkpointKeys.add(operationKey);
+      return {
+        operationKey,
+        result: checkpoint.result,
+        attempts: checkpoint.attempts,
+        errorCode: checkpoint.errorCode,
+      };
     });
-    return snapshot;
+    return {
+      jobId,
+      sourceFolderId,
+      destinationFolderId,
+      command,
+      duplicatePolicy,
+      selectedIds,
+      checkpoints,
+      updatedAt: snapshot.updatedAt,
+    };
   }
 
   export function asSafeRuntimeError(error: unknown): Error {

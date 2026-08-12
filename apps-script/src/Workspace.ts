@@ -8,16 +8,24 @@ namespace DriveTransferRuntime {
   }
 
   function safeDate(value: string): number {
+    if (
+      typeof value !== "string" ||
+      value.length < 20 ||
+      value.length > 40 ||
+      !/^\d{4}-\d{2}-\d{2}T/.test(value)
+    ) {
+      throw new Error("INVALID_TRANSFER_REQUEST");
+    }
     const time = new Date(value).getTime();
     if (!Number.isFinite(time)) throw new Error("INVALID_TRANSFER_REQUEST");
     return time;
   }
 
   function requireWorkspaceJob(job: WorkspaceJobRecord): WorkspaceJobRecord {
-    requireOpaqueId(job?.id);
-    requireSafeText(job?.name, 120);
-    requireSafeText(job?.sourceLabel, 255);
-    requireSafeText(job?.destinationLabel, 255);
+    const id = requireOpaqueId(job?.id);
+    const name = requireSafeText(job?.name, 120);
+    const sourceLabel = requireSafeText(job?.sourceLabel, 255);
+    const destinationLabel = requireSafeText(job?.destinationLabel, 255);
     if (
       !["transfer", "dry_run", "sync"].includes(job.kind) ||
       (job.command !== "copy" && job.command !== "move") ||
@@ -35,30 +43,50 @@ namespace DriveTransferRuntime {
       job.total < 0 ||
       job.completed < 0 ||
       job.failed < 0 ||
-      job.completed > job.total
+      job.completed > job.total ||
+      job.failed > job.total ||
+      job.completed + job.failed > job.total
     ) {
       throw new Error("INVALID_TRANSFER_REQUEST");
     }
     safeDate(job.createdAt);
     safeDate(job.updatedAt);
-    if (job.scheduleId) requireOpaqueId(job.scheduleId);
-    return job;
+    const scheduleId = job.scheduleId
+      ? requireOpaqueId(job.scheduleId)
+      : undefined;
+    return {
+      id,
+      name,
+      kind: job.kind,
+      command: job.command,
+      status: job.status,
+      sourceLabel,
+      destinationLabel,
+      createdAt: job.createdAt,
+      updatedAt: job.updatedAt,
+      total: job.total,
+      completed: job.completed,
+      failed: job.failed,
+      scheduleId,
+    };
   }
 
   function requireSchedule(
     schedule: TransferScheduleRecord,
   ): TransferScheduleRecord {
-    requireOpaqueId(schedule?.id);
-    requireDriveId(schedule.sourceFolderId);
-    requireDriveId(schedule.destinationFolderId);
-    requireSafeText(schedule?.name, 80);
+    const id = requireOpaqueId(schedule?.id);
+    const sourceFolderId = requireDriveId(schedule?.sourceFolderId);
+    const destinationFolderId = requireDriveId(schedule?.destinationFolderId);
+    const name = requireSafeText(schedule?.name, 80);
     if (
-      schedule.sourceFolderId === schedule.destinationFolderId ||
+      sourceFolderId === destinationFolderId ||
       !["transfer", "sync"].includes(schedule.kind) ||
       !["once", "daily", "weekly", "monthly"].includes(schedule.frequency) ||
       !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(schedule.timeOfDay) ||
       typeof schedule.timeZone !== "string" ||
+      schedule.timeZone.length < 1 ||
       schedule.timeZone.length > 80 ||
+      requireSafeText(schedule.timeZone, 80) !== schedule.timeZone ||
       typeof schedule.enabled !== "boolean" ||
       !schedule.filters ||
       typeof schedule.filters.nameIncludes !== "string" ||
@@ -72,6 +100,8 @@ namespace DriveTransferRuntime {
           /[^a-z0-9_-]/i.test(extension),
       ) ||
       !Array.isArray(schedule.filters.kinds) ||
+      schedule.filters.kinds.length < 1 ||
+      schedule.filters.kinds.length > 2 ||
       schedule.filters.kinds.some(
         (kind) => kind !== "folder" && kind !== "file",
       ) ||
@@ -85,15 +115,96 @@ namespace DriveTransferRuntime {
           return true;
         }
       }) ||
-      !["all", "new", "new_or_modified"].includes(schedule.filters.changeMode)
+      !["all", "new", "new_or_modified"].includes(
+        schedule.filters.changeMode,
+      ) ||
+      (schedule.filters.minSize !== undefined &&
+        (!Number.isSafeInteger(schedule.filters.minSize) ||
+          schedule.filters.minSize < 0)) ||
+      (schedule.filters.maxSize !== undefined &&
+        (!Number.isSafeInteger(schedule.filters.maxSize) ||
+          schedule.filters.maxSize < 0)) ||
+      (schedule.filters.minSize !== undefined &&
+        schedule.filters.maxSize !== undefined &&
+        schedule.filters.minSize > schedule.filters.maxSize) ||
+      (schedule.filters.modifiedAfter !== undefined &&
+        typeof schedule.filters.modifiedAfter !== "string") ||
+      (schedule.filters.modifiedBefore !== undefined &&
+        typeof schedule.filters.modifiedBefore !== "string") ||
+      !schedule.notifications ||
+      typeof schedule.notifications.browser !== "boolean" ||
+      typeof schedule.notifications.email !== "boolean" ||
+      (schedule.frequency === "weekly" &&
+        (!Number.isInteger(schedule.dayOfWeek) ||
+          (schedule.dayOfWeek as number) < 0 ||
+          (schedule.dayOfWeek as number) > 6)) ||
+      (schedule.frequency === "monthly" &&
+        (!Number.isInteger(schedule.dayOfMonth) ||
+          (schedule.dayOfMonth as number) < 1 ||
+          (schedule.dayOfMonth as number) > 28))
     ) {
+      throw new Error("INVALID_TRANSFER_REQUEST");
+    }
+    if (schedule.filters.modifiedAfter)
+      safeDate(schedule.filters.modifiedAfter);
+    if (schedule.filters.modifiedBefore)
+      safeDate(schedule.filters.modifiedBefore);
+    try {
+      Utilities.formatDate(new Date(), schedule.timeZone, "yyyy-MM-dd");
+    } catch {
       throw new Error("INVALID_TRANSFER_REQUEST");
     }
     safeDate(schedule.nextRunAt);
     safeDate(schedule.createdAt);
     safeDate(schedule.updatedAt);
-    requireDuplicatePolicy(schedule.duplicatePolicy);
-    return schedule;
+    const duplicatePolicy = requireDuplicatePolicy(schedule.duplicatePolicy);
+    return {
+      id,
+      name,
+      sourceFolderId,
+      destinationFolderId,
+      kind: schedule.kind,
+      frequency: schedule.frequency,
+      timeOfDay: schedule.timeOfDay,
+      dayOfWeek:
+        schedule.frequency === "weekly" ? schedule.dayOfWeek : undefined,
+      dayOfMonth:
+        schedule.frequency === "monthly" ? schedule.dayOfMonth : undefined,
+      timeZone: schedule.timeZone,
+      nextRunAt: schedule.nextRunAt,
+      enabled: schedule.enabled,
+      duplicatePolicy,
+      filters: {
+        nameIncludes: schedule.filters.nameIncludes,
+        extensions: [...new Set(schedule.filters.extensions)],
+        kinds: [...new Set(schedule.filters.kinds)],
+        minSize: schedule.filters.minSize,
+        maxSize: schedule.filters.maxSize,
+        modifiedAfter: schedule.filters.modifiedAfter,
+        modifiedBefore: schedule.filters.modifiedBefore,
+        excludedPaths: [...new Set(schedule.filters.excludedPaths)],
+        changeMode: schedule.filters.changeMode,
+      },
+      notifications: {
+        browser: schedule.notifications.browser,
+        email: schedule.notifications.email,
+      },
+      createdAt: schedule.createdAt,
+      updatedAt: schedule.updatedAt,
+    };
+  }
+
+  function requireHistoryRecord(item: HistoryRecord): HistoryRecord {
+    const job = requireWorkspaceJob(item);
+    safeDate(item.finishedAt);
+    if (typeof item.reportAvailable !== "boolean") {
+      throw new Error("INVALID_TRANSFER_REQUEST");
+    }
+    return {
+      ...job,
+      finishedAt: item.finishedAt,
+      reportAvailable: item.reportAvailable,
+    };
   }
 
   function pruneWorkspace(snapshot: WorkspaceSnapshot): WorkspaceSnapshot {
@@ -102,6 +213,7 @@ namespace DriveTransferRuntime {
       jobs: snapshot.jobs.slice(0, 250).map(requireWorkspaceJob),
       schedules: snapshot.schedules.slice(0, 100).map(requireSchedule),
       history: snapshot.history
+        .map(requireHistoryRecord)
         .filter((item) => safeDate(item.finishedAt) >= cutoff)
         .slice(0, 1000),
     };

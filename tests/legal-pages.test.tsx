@@ -24,6 +24,13 @@ describe("legal pages", () => {
     expect(html).toContain("2 meses");
   });
 
+  it("keeps legal navigation in the footer without duplicating it", () => {
+    const html = renderToStaticMarkup(<LegalPage route="/privacidad" />);
+
+    expect(html.match(/<nav/g)).toHaveLength(1);
+    expect(html).toContain("Volver a DriveTransfer");
+  });
+
   it("identifies exploration content and independent origin", () => {
     const html = renderToStaticMarkup(<LegalPage route="/procedencia-datos" />);
 

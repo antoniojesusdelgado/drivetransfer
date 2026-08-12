@@ -61,9 +61,6 @@ export function LandingView({
                 {connecting ? "Abriendo Google…" : "Conectar con Google"}
               </span>
             </button>
-            <p className="landing__limited-access">
-              Acceso con Google limitado temporalmente a usuarios de prueba
-            </p>
             <button
               className="landing-button landing-button--explore"
               onClick={onExplore}

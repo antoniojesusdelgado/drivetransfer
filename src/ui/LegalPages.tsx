@@ -257,15 +257,18 @@ export function LegalPage({ route }: { readonly route: LegalRoute }) {
   return (
     <main className="legal-page">
       <header className="legal-header">
-        <a href="/" aria-label="Volver al inicio de DriveTransfer">
+        <a
+          className="legal-home"
+          href="/"
+          aria-label="Volver al inicio de DriveTransfer"
+        >
           <Brand compact />
         </a>
-        <LegalLinks compact />
-      </header>
-      <article className="legal-document">
         <a className="legal-back" href="/">
           <ArrowLeft aria-hidden="true" /> Volver a DriveTransfer
         </a>
+      </header>
+      <article className="legal-document">
         <div className="legal-hero">
           <p>{document.eyebrow}</p>
           <h1>{document.title}</h1>

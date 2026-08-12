@@ -27,7 +27,9 @@ function executeTransferBatch(
   request: DriveTransferRuntime.ExecuteBatchRequest,
 ): DriveTransferRuntime.ExecuteBatchResponse {
   DriveTransferRuntime.enforceUserRateLimit("transfer");
-  return DriveTransferRuntime.executeBatch(request);
+  return DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.executeBatch(request),
+  );
 }
 
 function verifyTransferBatch(
@@ -46,14 +48,18 @@ function saveTransferFavorite(
   favorite: DriveTransferRuntime.TransferFavorite,
 ): DriveTransferRuntime.TransferFavorite {
   DriveTransferRuntime.enforceUserRateLimit("write");
-  return DriveTransferRuntime.saveFavorite(favorite);
+  return DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.saveFavorite(favorite),
+  );
 }
 
 function deleteTransferFavorite(request: { readonly favoriteId: string }): {
   readonly ok: true;
 } {
   DriveTransferRuntime.enforceUserRateLimit("write");
-  DriveTransferRuntime.deleteFavorite(request);
+  DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.deleteFavorite(request),
+  );
   return { ok: true };
 }
 
@@ -61,7 +67,9 @@ function saveTransferJob(
   snapshot: DriveTransferRuntime.PersistedTransferJob,
 ): DriveTransferRuntime.PersistedTransferJob {
   DriveTransferRuntime.enforceUserRateLimit("write");
-  return DriveTransferRuntime.saveJob(snapshot);
+  return DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.saveJob(snapshot),
+  );
 }
 
 function loadTransferJob(request: {
@@ -80,7 +88,9 @@ function clearTransferJob(request: { readonly jobId: string }): {
   readonly ok: true;
 } {
   DriveTransferRuntime.enforceUserRateLimit("write");
-  DriveTransferRuntime.clearJob(request);
+  DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.clearJob(request),
+  );
   return { ok: true };
 }
 
@@ -93,7 +103,9 @@ function saveWorkspaceJob(
   job: DriveTransferRuntime.WorkspaceJobRecord,
 ): DriveTransferRuntime.WorkspaceJobRecord {
   DriveTransferRuntime.enforceUserRateLimit("write");
-  return DriveTransferRuntime.saveWorkspaceJobRecord(job);
+  return DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.saveWorkspaceJobRecord(job),
+  );
 }
 
 function controlWorkspaceJob(request: {
@@ -101,21 +113,27 @@ function controlWorkspaceJob(request: {
   readonly action: DriveTransferRuntime.JobControlAction;
 }): DriveTransferRuntime.WorkspaceSnapshot {
   DriveTransferRuntime.enforceUserRateLimit("write");
-  return DriveTransferRuntime.controlJob(request);
+  return DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.controlJob(request),
+  );
 }
 
 function saveTransferSchedule(
   schedule: DriveTransferRuntime.TransferScheduleRecord,
 ): DriveTransferRuntime.TransferScheduleRecord {
   DriveTransferRuntime.enforceUserRateLimit("write");
-  return DriveTransferRuntime.saveScheduleRecord(schedule);
+  return DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.saveScheduleRecord(schedule),
+  );
 }
 
 function deleteTransferSchedule(request: { readonly scheduleId: string }): {
   readonly ok: true;
 } {
   DriveTransferRuntime.enforceUserRateLimit("write");
-  DriveTransferRuntime.deleteScheduleRecord(request);
+  DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.deleteScheduleRecord(request),
+  );
   return { ok: true };
 }
 
@@ -123,15 +141,20 @@ function runTransferScheduleNow(request: {
   readonly scheduleId: string;
 }): DriveTransferRuntime.WorkspaceSnapshot {
   DriveTransferRuntime.enforceUserRateLimit("write");
-  return DriveTransferRuntime.runScheduleNow(request);
+  return DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.runScheduleNow(request),
+  );
 }
 
 function pruneTransferHistory(): DriveTransferRuntime.WorkspaceSnapshot {
   DriveTransferRuntime.enforceUserRateLimit("write");
-  return DriveTransferRuntime.prunePrivateHistory();
+  return DriveTransferRuntime.withUserMutationLock(() =>
+    DriveTransferRuntime.prunePrivateHistory(),
+  );
 }
 
 function dispatchTransferSchedules(): void {
+  DriveTransferRuntime.enforceUserRateLimit("write");
   DriveTransferRuntime.dispatchSchedules();
 }
 

@@ -22,6 +22,8 @@
 - Mobile vertical-balance comparison: `artifacts/design-qa/comparison-mobile-vertical-balance.png`
 - Full-flow responsive audit before fixes: `artifacts/responsive-audit/before/`
 - Full-flow responsive audit after fixes: `artifacts/responsive-audit/after/`
+- Legal mobile header after simplification: `artifacts/design-qa/legal-mobile-header-after.png`
+- Legal desktop header after simplification: `artifacts/design-qa/legal-desktop-header-after.png`
 
 ## Comparison history
 
@@ -32,6 +34,7 @@
 5. Mobile image pass: the reduced illustration exposed the raster's rectangular background. Replacing the mobile-only multiply blend with darken integrates the asset into the page while leaving the desktop rendering unchanged.
 6. Mobile height pass: tall mobile viewports left excessive empty space below the steps. Height-aware spacing now distributes that space around the composition while preserving the compact, scroll-free layout on shorter screens.
 7. Full-flow responsive pass: removed page-level overflow from selection and review, stacked the intermediate layout at `1024px`, converted the review table into mobile cards and made progress actions full-width on narrow screens.
+8. Legal navigation pass: removed the duplicated legal links from the header, kept the complete legal navigation in the footer and aligned the brand with a single-line return link at `390px` and `1488px`.
 
 ## Final visual review
 
@@ -39,6 +42,7 @@
 - P1: none.
 - P2: none.
 - P3: minor raster and antialiasing differences remain in the independently recreated illustration and brand mark.
+- Legal pages: the header now contains only the DriveTransfer brand and the return link; legal navigation appears once in the footer, with no horizontal overflow at `390px` or `1488px`.
 - The desktop composition, spacing, button geometry, typography hierarchy and three-step row match the supplied reference at the target viewport.
 - The desktop composition remains unchanged and fits exactly at `1488 x 1058` (`scrollHeight: 1058`, `scrollWidth: 1488`).
 - The mobile layout preserves the complete illustration, content, actions and steps in one viewport at `375 x 667`, `390 x 700`, `390 x 844` and `520 x 844`.
