@@ -1,6 +1,6 @@
 # DriveTransfer
 
-**Versión 1.0.1** · [drivetransfer.app](https://drivetransfer.app)
+**Versión 1.0.2** · [drivetransfer.app](https://drivetransfer.app)
 
 DriveTransfer permite elegir, revisar y transferir archivos entre carpetas de
 Google Drive con una vista previa obligatoria. Funciona con Mi unidad y unidades

@@ -2,7 +2,7 @@
 
 Fecha: 13 de agosto de 2026
 
-Versión: 1.0.1
+Versión: 1.0.2
 
 ## Evidencias conservadas
 
@@ -12,6 +12,8 @@ Versión: 1.0.1
   `legal-mobile-header-after.png`.
 - Navegación móvil: `workspace-mobile-selector.png`.
 - Flujo responsive final: `artifacts/responsive-audit/after/`.
+- Cookies en móvil tras corregir el ajuste del título:
+  `artifacts/responsive-audit/after/cookies-mobile-final.png`.
 
 Se retiraron comparaciones intermedias y capturas anteriores para no publicar
 artefactos redundantes. Todas las evidencias restantes utilizan contenido
@@ -23,6 +25,14 @@ ficticio y no muestran cuentas, documentos ni identificadores reales.
 - Transparencia sobre IA: una única navegación legal, distintivo accesible dentro
   de su página y ausencia del distintivo en portada.
 - Flujo completo: selección, revisión, confirmación, progreso y resultado.
+- Revisión: nombres largos de origen y destino quedan contenidos, truncados y
+  accesibles mediante título, sin ampliar la tarjeta lateral.
+- Contenido dinámico: trabajos, programaciones, historial, progreso y títulos
+  admiten nombres extensos sin forzar el ancho de sus tarjetas.
+- Navegación: cada cambio de fase o sección vuelve al inicio del contenido y no
+  conserva una posición de desplazamiento perteneciente a la vista anterior.
+- Páginas legales: el título «Cookies y almacenamiento» reajusta correctamente
+  en móvil sin generar anchura horizontal adicional.
 - Workspace: centro, programaciones, historial y privacidad.
 - Sin desbordamiento horizontal en 390, 768, 1024 y 1488 px.
 - Sin error overlay ni mensajes de consola en el recorrido comprobado.
