@@ -1,0 +1,33 @@
+name: Informar de un error
+description: Comunica un comportamiento reproducible sin incluir datos privados.
+title: "[Error]: "
+labels: [error]
+body:
+  - type: markdown
+    attributes:
+      value: No incluyas tokens, IDs, nombres de archivos ni documentos reales.
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción
+      description: Explica qué ocurrió y qué esperabas.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducirlo
+      placeholder: Usa únicamente datos ficticios.
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Entorno
+      options: [Exploración, Google con datos de prueba]
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Navegador y dispositivo

@@ -26,6 +26,19 @@ namespace DriveTransferRuntime {
     readonly payload: unknown;
   }
 
+  function requirePrivateDocumentReference(name: string, kind: string): void {
+    if (
+      typeof name !== "string" ||
+      name.indexOf(PRIVATE_FILE_PREFIX) !== 0 ||
+      name.length > 180 ||
+      !/^[a-z0-9._-]+$/i.test(name) ||
+      typeof kind !== "string" ||
+      !/^[a-z0-9._-]{1,80}$/i.test(kind)
+    ) {
+      throw new Error("INVALID_TRANSFER_REQUEST");
+    }
+  }
+
   function appDataDrive(): GoogleAppsScript.Drive {
     if (!Drive) throw new Error("DRIVE_SERVICE_UNAVAILABLE");
     return Drive;
@@ -36,8 +49,18 @@ namespace DriveTransferRuntime {
       PropertiesService.getUserProperties().getProperty(APP_DATA_INDEX_KEY);
     if (!raw) return {};
     try {
-      const value = JSON.parse(raw) as Record<string, string>;
-      return value && typeof value === "object" ? value : {};
+      const value = JSON.parse(raw) as Record<string, unknown>;
+      if (!value || typeof value !== "object" || Array.isArray(value))
+        return {};
+      return Object.fromEntries(
+        Object.entries(value).filter(
+          ([name, id]) =>
+            name.indexOf(PRIVATE_FILE_PREFIX) === 0 &&
+            name.length <= 180 &&
+            typeof id === "string" &&
+            /^[A-Za-z0-9_-]{10,200}$/.test(id),
+        ),
+      ) as Record<string, string>;
     } catch {
       return {};
     }
@@ -77,13 +100,15 @@ namespace DriveTransferRuntime {
   }
 
   export function readPrivateDocument<T>(name: string, kind: string): T | null {
+    requirePrivateDocumentReference(name, kind);
     const fileId = findPrivateFile(name);
     if (!fileId) return null;
     const envelope = JSON.parse(downloadPrivateFile(fileId)) as PrivateEnvelope;
     if (
       envelope.schemaVersion !== APP_DATA_SCHEMA ||
       envelope.kind !== kind ||
-      typeof envelope.updatedAt !== "string"
+      typeof envelope.updatedAt !== "string" ||
+      !Number.isFinite(new Date(envelope.updatedAt).getTime())
     ) {
       throw new Error("UNKNOWN_STORAGE_SCHEMA");
     }
@@ -95,6 +120,7 @@ namespace DriveTransferRuntime {
     kind: string,
     payload: T,
   ): T {
+    requirePrivateDocumentReference(name, kind);
     const text = JSON.stringify({
       schemaVersion: APP_DATA_SCHEMA,
       kind,

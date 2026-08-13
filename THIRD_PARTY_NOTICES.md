@@ -1,14 +1,20 @@
-# Third-party notices
+# Avisos de terceros
 
-## European Union AI transparency icon
+## Distintivo europeo de transparencia sobre IA
 
-DriveTransfer includes the basic black AI label from the European Commission's
-official “EU Icons for labelling AI-generated content” SVG package, downloaded
-on 12 August 2026 from:
+DriveTransfer incluye el distintivo básico negro del paquete SVG oficial
+«EU Icons for labelling AI-generated content», publicado por la Comisión
+Europea. El recurso se obtuvo el 12 de agosto de 2026 desde:
 
 https://digital-strategy.ec.europa.eu/en/policies/eu-icons-labelling-ai-generated-content
 
-The European Commission states that these icons are freely available without
-attribution. DriveTransfer uses the icon voluntarily as a transparency aid. Its
-presence does not indicate European Union certification, approval or adherence
-to the voluntary Code of Practice.
+La Comisión indica que los distintivos pueden utilizarse libremente sin
+atribución. DriveTransfer lo muestra voluntariamente en su página de
+transparencia. No supone certificación, aprobación de la Unión Europea ni
+adhesión al Código de Buenas Prácticas.
+
+## Google
+
+Google, Google Drive y sus logotipos son marcas de Google LLC. El recurso del
+botón de conexión se utiliza para identificar el acceso interoperable y no
+implica afiliación, patrocinio ni aprobación.

@@ -1,38 +1,36 @@
-# AGENTS.md
+# Instrucciones para agentes
 
-## Working language
+## Idioma
 
-- Respond to the user in Spanish.
-- Use English for code, identifiers, branches and commit messages.
-- Keep public product documentation in natural Spanish unless a technical convention requires English.
+- Responder al usuario en español.
+- Usar inglés para código, identificadores, ramas y commits.
+- Mantener la documentación pública en español natural.
 
-## Product boundaries
+## Límites del producto
 
-- DriveTransfer is a public, independent replica of a tool created to solve a real document-management need at Fundacion Cibervoluntarios.
-- Never include real Google Drive folder IDs, document names, grant files, invoices, payroll records, contracts, credentials or internal procedures.
-- Use only synthetic folder trees, files and metadata in tests, screenshots and demonstrations.
-- Do not imply that the public repository is owned, sponsored or supported by Fundacion Cibervoluntarios.
+- DriveTransfer es un proyecto personal e independiente de portfolio.
+- Usar únicamente árboles, archivos y metadatos ficticios en pruebas y capturas.
+- No incluir IDs, documentos, credenciales, procedimientos ni datos reales.
+- No atribuir patrocinio, propiedad o aprobación a Google ni a terceros.
 
-## Engineering principles
+## Ingeniería
 
-- Inspect the repository, current branch and working tree before making changes.
-- Prefer TypeScript, small modules and explicit domain types.
-- Keep Google OAuth scopes to the minimum required for the selected operation.
-- Separate discovery, selection, duplicate detection, execution and reporting.
-- Copy and move must be distinct, explicit operations. Moving files requires an additional confirmation step and must never be the default.
-- Implement a dry-run preview before any mutation.
-- Make operations idempotent where possible and safe to retry after partial failures.
-- Do not log access tokens, folder IDs, file names or other sensitive document metadata.
-- Respect Google Apps Script and Google Drive API quotas and use batching, pagination and resumable jobs when appropriate.
+- Inspeccionar rama, estado y arquitectura antes de modificar.
+- Mantener ámbitos OAuth mínimos y tokens fuera de almacenamiento y logs.
+- Separar descubrimiento, selección, conflictos, ejecución y resultados.
+- Copiar es predeterminado; mover exige confirmación adicional.
+- Ejecutar una comprobación previa antes de cualquier mutación.
+- Diseñar operaciones idempotentes, paginadas y seguras ante fallos parciales.
+- Respetar cuotas de Apps Script y Drive API.
 
-## Change control
+## Control de cambios
 
-- Do not commit, push, open pull requests, publish releases or deploy without explicit user authorization.
-- Do not rewrite published history or force-push.
-- Preserve user changes and avoid destructive commands.
+- Preservar los cambios del usuario y evitar operaciones destructivas.
+- No hacer commit, push, PR, release o despliegue sin autorización expresa.
+- No reescribir historial ni forzar push.
 
-## Validation
+## Validación
 
-- Run formatting, lint, typecheck, tests and build when available.
-- Test duplicate handling, permissions, partial failures, retries and copy/move confirmation.
-- Review accessibility, responsive behavior, privacy and security for every user-facing flow.
+- Ejecutar formato, lint, tipos, pruebas y build.
+- Probar duplicados, permisos, fallos parciales, reintentos y confirmación.
+- Revisar accesibilidad, responsive, privacidad y seguridad en cada flujo público.

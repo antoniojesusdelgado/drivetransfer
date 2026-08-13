@@ -39,4 +39,14 @@ describe("safe reports", () => {
     expect(report.content).toContain("'=HYPERLINK");
     expect(report.content).not.toContain("\r\n=HYPERLINK");
   });
+
+  it("neutralizes every common spreadsheet formula prefix", () => {
+    for (const prefix of ["+", "-", "@", "\t="]) {
+      const report = createJobReport(
+        { ...manifest, name: `${prefix}malicious()` },
+        "csv",
+      );
+      expect(report.content.split("\r\n")[1]).toContain(`'${prefix}`);
+    }
+  });
 });

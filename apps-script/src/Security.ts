@@ -98,7 +98,11 @@ namespace DriveTransferRuntime {
 
   export function optionalPageToken(value: unknown): string | undefined {
     if (value === undefined || value === null || value === "") return undefined;
-    if (typeof value !== "string" || value.length > MAX_PAGE_TOKEN_LENGTH) {
+    if (
+      typeof value !== "string" ||
+      value.length > MAX_PAGE_TOKEN_LENGTH ||
+      containsUnsafeText(value)
+    ) {
       throw new Error("INVALID_PAGE_TOKEN");
     }
     return value;
@@ -172,9 +176,16 @@ namespace DriveTransferRuntime {
     if (request.command === "move" && request.moveConfirmed !== true) {
       throw new Error("MOVE_CONFIRMATION_REQUIRED");
     }
+    const operationKeys = new Set<string>();
+    const sourceIds = new Set<string>();
     request.operations.forEach((operation) => {
-      requireOpaqueId(operation.operationKey);
-      requireDriveId(operation.sourceId);
+      const operationKey = requireOpaqueId(operation.operationKey);
+      const sourceId = requireDriveId(operation.sourceId);
+      if (operationKeys.has(operationKey) || sourceIds.has(sourceId)) {
+        throw new Error("INVALID_TRANSFER_REQUEST");
+      }
+      operationKeys.add(operationKey);
+      sourceIds.add(sourceId);
       if (operation.sourceParentId) requireDriveId(operation.sourceParentId);
       requireRelativePath(operation.relativePath);
       requireSafeText(operation.name, MAX_FILE_NAME_LENGTH);
@@ -186,6 +197,7 @@ namespace DriveTransferRuntime {
         typeof operation.mimeType !== "string" ||
         operation.mimeType.length === 0 ||
         operation.mimeType.length > 256 ||
+        !/^[\w.+-]+\/[\w.+-]+$/i.test(operation.mimeType) ||
         containsUnsafeText(operation.mimeType) ||
         (operation.sourceSpace !== "my_drive" &&
           operation.sourceSpace !== "shared_drive") ||

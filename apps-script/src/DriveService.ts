@@ -102,12 +102,17 @@ namespace DriveTransferRuntime {
   function findOperation(
     operationKey: string,
     driveId?: string,
+    destinationRootId?: string,
   ): DriveFile | undefined {
     const escaped = escapeDriveQueryValue(operationKey);
     return findFiles(
       `appProperties has { key='driveTransferOperationKey' and value='${escaped}' }`,
       driveId,
-    )[0];
+    ).find(
+      (file) =>
+        !destinationRootId ||
+        (!!file.id && isWithinRoot(file.id, destinationRootId)),
+    );
   }
 
   function findFolder(
@@ -366,7 +371,13 @@ namespace DriveTransferRuntime {
     if (
       source.trashed === true ||
       source.name !== operation.name ||
-      source.mimeType !== operation.mimeType
+      source.mimeType !== operation.mimeType ||
+      (source.mimeType === FOLDER_MIME_TYPE ? "folder" : "file") !==
+        operation.kind ||
+      (operation.size !== undefined &&
+        String(source.size) !== String(operation.size)) ||
+      (operation.sourceParentId !== undefined &&
+        !(source.parents ?? []).includes(operation.sourceParentId))
     ) {
       throw new Error("INVALID_TRANSFER_REQUEST");
     }
@@ -387,16 +398,38 @@ namespace DriveTransferRuntime {
     ) {
       throw new Error("DRIVE_PERMISSION_DENIED");
     }
+    if (
+      request.command === "move" &&
+      !(
+        operation.kind === "folder" &&
+        operation.sourceSpace !== request.destinationSpace
+      ) &&
+      source.capabilities?.canMoveItemWithinDrive !== true &&
+      source.capabilities?.canMoveItemOutOfDrive !== true
+    ) {
+      throw new Error("DRIVE_PERMISSION_DENIED");
+    }
     const existingOperation = findOperation(
       operation.operationKey,
       destination.driveId,
+      destination.id,
     );
-    if (existingOperation) {
+    if (
+      existingOperation &&
+      existingOperation.name === targetName &&
+      existingOperation.mimeType === source.mimeType &&
+      (source.size === undefined ||
+        existingOperation.size === undefined ||
+        String(existingOperation.size) === String(source.size))
+    ) {
       return {
         operationKey: operation.operationKey,
         result: request.command === "copy" ? "copied" : "moved",
         attempts: 1,
       };
+    }
+    if (existingOperation) {
+      throw new Error("INVALID_TRANSFER_REQUEST");
     }
 
     const isNativeFolderMove =
@@ -670,7 +703,7 @@ namespace DriveTransferRuntime {
       const verifiedOperationKeys = request.operationKeys
         .map(requireOpaqueId)
         .filter((operationKey) =>
-          findOperation(operationKey, destination.driveId),
+          findOperation(operationKey, destination.driveId, destinationId),
         );
       return { verifiedOperationKeys };
     } catch (error) {

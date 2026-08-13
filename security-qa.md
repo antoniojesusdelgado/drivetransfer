@@ -1,80 +1,61 @@
-# Security and system validation
+# Validación de seguridad y sistema
 
-Date: 2026-08-12
-Release: 1.0.0
+Fecha: 13 de agosto de 2026
 
-## Scope
+Versión: 1.0.1
 
-DriveTransfer is a static React application hosted by Vercel. Authenticated
-operations are sent directly to the Google Apps Script Execution API and run
-with the connected user's authorization. The browser never uploads, downloads,
-parses or executes the bytes of Drive files; Google Drive performs copy and move
-operations server-side.
+## Alcance
 
-## Implemented controls
+DriveTransfer es una aplicación React estática alojada en Vercel. Las operaciones
+autorizadas se envían directamente a Apps Script y se ejecutan con la identidad
+del usuario. El navegador y Apps Script no reciben, analizan ni ejecutan los bytes
+de los archivos; Google Drive realiza la copia o movimiento internamente.
 
-- OAuth access tokens remain in memory and are not written to URLs, logs or
-  persistent browser storage.
-- Apps Script validates Drive IDs, opaque job IDs, operation kinds, spaces,
-  sizes, MIME types, relative paths and file names before mutation.
-- File names are limited to 255 characters and control characters are rejected.
-- Read, write and transfer entry points have per-user rate limits. Transfer
-  calls are limited to 60 batches per minute and each batch contains at most 10
-  mutations.
-- A second script-wide limit caps distributed traffic across users, and
-  mutating entry points use a per-user lock so concurrent requests cannot race
-  over the same private state or Drive destination.
-- Source, destination, capabilities, permissions and ancestry are revalidated
-  immediately before every Drive mutation.
-- Copy retries are idempotent through opaque `appProperties`; move remains an
-  explicit, additionally confirmed operation.
-- Verification calls are limited to 100 operation keys and the client paginates
-  larger verification sets.
-- Private app-data documents are limited to 450 KB both before writing and
-  before reading.
-- React renders external names as text. There is no raw HTML injection, dynamic
-  code execution or user-controlled URL fetch in the application.
-- CSV reports neutralize spreadsheet formulas and omit internal Drive and job
-  identifiers.
-- Production headers include CSP, HSTS, anti-framing, MIME sniffing protection,
-  a restrictive permissions policy, same-origin resource policy and strict
-  referrer handling.
-- Apps Script exception logging is disabled and the repository contains no
-  application logging of tokens, Drive IDs or file names.
-- Persisted jobs, workspace history and schedules are reconstructed from an
-  allowlist of validated fields. Invalid counters, dates, time zones, filter
-  bounds, notification flags and duplicate checkpoint keys are rejected.
+## Controles implementados
 
-## Validation evidence
+- Tokens OAuth solo en memoria y fuera de URLs, logs y almacenamiento persistente.
+- Validación de IDs, claves opacas, comandos, espacios, nombres, MIME, tamaños,
+  padres, rutas y esquemas antes de almacenar o mutar.
+- Reconsulta inmediata de origen, destino, permisos, capacidades, pertenencia al
+  árbol y ciclos antes de cada operación.
+- Reutilización idempotente limitada al destino previsto y con coincidencia de
+  nombre, MIME y tamaño conocido.
+- Máximo de 100 lecturas por página, 10 mutaciones por lote y 100 claves por
+  verificación.
+- Límites por usuario de 240 lecturas, 90 escrituras y 60 lotes por minuto; y
+  globales de 1.000, 300 y 180.
+- Locks por usuario y globales para límites y mutaciones concurrentes.
+- Documentos privados versionados y limitados a 450 KB antes de leer y escribir.
+- Renderizado React sin HTML crudo, código dinámico ni URLs externas controladas.
+- CSV con fórmulas neutralizadas e informes sin identificadores internos.
+- CSP, HSTS, anti-framing, `nosniff`, permisos restrictivos y política de referrer.
+- Sin logs de aplicación que incluyan tokens, IDs o nombres de Drive.
 
-- Formatting: passed.
-- ESLint: passed.
-- TypeScript: passed.
-- Vitest: 15 files and 42 tests passed.
-- Web and Apps Script production builds: passed.
-- Apps Script artifact verification: passed.
-- npm dependency audit (production and complete tree): 0 known vulnerabilities.
-- Secret-name, token-leak and dangerous-DOM scan: no matches.
-- No tracked environment, credential, secret or token files were found.
-- Official EU guidance was checked before publication: the transparency icon is
-  optional in this human-reviewed, editorially controlled context and is not
-  represented as an EU certification.
-- Browser smoke test at 390, 768, 1024 and 1488 px: no horizontal overflow,
-  page errors or console errors.
-- Job cards at all tested widths: no shadow bands between cards.
+## Pruebas de abuso
 
-## Residual risk
+- HTML, eventos, URLs `javascript:`, fórmulas CSV y caracteres de control.
+- IDs, claves, MIME, nombres, tamaños, padres y metadatos falsificados.
+- Payloads, páginas, documentos privados y listas por encima de los límites.
+- Repetición de lotes, claves duplicadas, concurrencia y estados ilegales.
+- Sesión caducada, permisos insuficientes, cuota agotada y fallo parcial.
+- Búsqueda de `dangerouslySetInnerHTML`, `innerHTML`, `eval`, `new Function`,
+  secretos rastreados y archivos de entorno.
 
-No internet-facing application can be guaranteed to be impossible to attack.
-The remaining material dependencies are Google's OAuth, Drive and Apps Script
-platforms, Vercel's static delivery, user-granted Drive permissions and their
-quotas. Public OAuth access with the restricted Drive scope still requires a
-controlled domain, Google's verification and any security assessment Google
-requests. The user-specific and script-wide limits reduce abuse, while Google
-quotas remain the ultimate platform cap because Vercel does not proxy the
-authenticated Apps Script calls.
+## Evidencias de cierre
 
-DriveTransfer does not ingest or execute file bytes: Drive copies or moves the
-opaque objects server-side. This prevents a transferred document from executing
-inside Vercel or Apps Script, but it is not an antivirus and cannot certify that
-a file is safe when another application later opens it.
+- Formato, ESLint y TypeScript: superados.
+- Vitest: 17 archivos y 51 pruebas superadas.
+- Build web, build Apps Script y verificación del artefacto: superados.
+- Auditoría npm completa y de producción: 0 vulnerabilidades conocidas.
+- Búsqueda de secretos, HTML dinámico, ejecución de código y logs sensibles: sin
+  hallazgos en código de producción.
+- Responsive local en 390, 768, 1024 y 1488 px: sin desbordamiento horizontal.
+- CodeQL: configurado como control obligatorio del PR y de `main`.
+
+## Riesgo residual
+
+Ninguna aplicación expuesta a Internet puede garantizar que sea imposible de
+atacar. Persisten dependencias de Google, Vercel, permisos concedidos y cuotas.
+DriveTransfer reduce el abuso con validación, límites e idempotencia, pero no es
+un antivirus y no puede certificar la seguridad de un archivo cuando otra
+aplicación lo abra.

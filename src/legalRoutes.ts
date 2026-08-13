@@ -3,7 +3,8 @@ export type LegalRoute =
   | "/procedencia-datos"
   | "/aviso-legal"
   | "/cookies"
-  | "/eliminar-datos";
+  | "/eliminar-datos"
+  | "/transparencia-ia";
 
 export const legalRoutes = new Set<LegalRoute>([
   "/privacidad",
@@ -11,4 +12,5 @@ export const legalRoutes = new Set<LegalRoute>([
   "/aviso-legal",
   "/cookies",
   "/eliminar-datos",
+  "/transparencia-ia",
 ]);

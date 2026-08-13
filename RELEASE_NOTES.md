@@ -1,30 +1,26 @@
-# DriveTransfer 1.0.0
+# DriveTransfer 1.0.1
 
-Primera versión pública estable de DriveTransfer.
+Versión pública de cierre para portfolio.
 
-## Incluye
+## Cambios
 
-- Transferencias seguras entre Mi unidad y unidades compartidas.
-- Vista previa obligatoria, detección de conflictos y modo solo comprobar.
-- Copia predeterminada y confirmación reforzada para movimientos.
-- Pausa, reanudación, reintentos e informes JSON/CSV seguros.
-- Centro de trabajos, favoritos, programaciones e historial privado.
-- Recorrido completo sin iniciar sesión con datos ficticios.
-- Consentimiento de Analytics, eliminación de datos y políticas públicas.
-- Interfaz responsive y accesible para móvil, tablet y escritorio.
+- Nueva página independiente `/transparencia-ia` y enlace legal discreto.
+- Distintivo europeo visible únicamente dentro de esa página.
+- Revalidación reforzada de padre, tipo, tamaño y resultados idempotentes.
+- Índices privados filtrados y documentos versionados con validación estricta.
+- Documentación técnica, diagramas y políticas consolidados en español.
+- Automatizaciones de calidad, seguridad, CodeQL y dependencias para GitHub.
 
-## Seguridad y privacidad
+## Seguridad
 
-- Tokens de Google solo en memoria.
-- Validación y rate limiting por usuario y global en Apps Script.
-- Operaciones por lotes, locks e idempotencia para reintentos seguros.
-- Sin lectura ni ejecución de los bytes de los archivos transferidos.
-- Desarrollo asistido por OpenAI Codex bajo revisión humana; Codex no recibe
-  datos de usuarios durante el funcionamiento de DriveTransfer.
+- El contenido de archivos permanece en Google Drive y nunca se ejecuta en la
+  aplicación.
+- Límites por usuario y globales, lotes de diez y locks para mutaciones.
+- Tokens en memoria, errores seguros, CSV neutralizado y cabeceras defensivas.
 
-## Limitaciones
+## Limitaciones conocidas
 
-- El acceso público con Google permanece limitado a testers hasta que Google
-  apruebe los permisos restringidos.
-- Las cuotas y disponibilidad de Google Drive, Apps Script y Vercel siguen
-  siendo dependencias externas.
+- DriveTransfer no es un antivirus y no certifica la seguridad de un archivo al
+  abrirlo con otra aplicación.
+- La apertura general de OAuth depende de la verificación de Google para los
+  permisos restringidos.

@@ -1,36 +1,39 @@
-# Functional QA
+# Validación funcional
 
-## Added capabilities
+Fecha: 13 de agosto de 2026
 
-- Preflight summary for item counts, known size, estimated duration, permissions and cross-space warnings.
-- Duplicate policies: skip, preserve both with a collision-safe name, or stop for review.
-- Private favorite routes per Google user, with an exploration example using synthetic folders.
-- Versioned private documents in appDataFolder, separated into manifests, selections and checkpoints.
-- Transfer center with a single active job, ordered queue and selective actions.
-- Guided schedules, conservative one-way synchronization and a per-user locked dispatcher.
-- The dispatcher processes resumable pages of 100 Drive items and mutation batches of 10 until the Apps Script safety deadline.
-- New or modified synchronization files receive collision-safe dated versions; destination removals are never issued.
-- Ninety-day history and safe JSON/CSV reports.
-- Browser completion notifications requested only when the user opts in.
-- Retry action that removes only failed checkpoints and preserves completed operations.
+Versión: 1.0.1
 
-## Safety boundaries
+## Capacidades cubiertas
 
-- Google access tokens remain memory-only.
-- No Drive IDs, names or job payloads are written to browser storage for Google mode.
-- Private documents reject unknown schemas and payloads above the configured size limit.
-- The appDataFolder index and trigger reference are the only small operational values retained in UserProperties.
-- A resumable job can be discovered from another browser after reconnecting the same Google account.
-- Favorite and job inputs are validated before storage; storage errors return safe public codes.
-- Duplicate preservation never overwrites an existing file.
-- Move confirmation is requested again after restoring a saved job.
+- Comprobación previa de volumen, tamaño conocido, duración, permisos y cruces
+  entre espacios.
+- Conflictos: omitir, conservar ambos con nombre seguro o detenerse para revisar.
+- Favoritos privados, cola con un único trabajo activo y reintento selectivo.
+- Documentos privados versionados en `appDataFolder` con manifiesto, selección y
+  checkpoints separados.
+- Programaciones guiadas, sincronización unidireccional conservadora y
+  dispatcher bloqueado por usuario.
+- Historial durante 90 días, informes JSON/CSV seguros y avisos opcionales.
+- Árbol virtualizado probado con 25.000 elementos sintéticos.
 
-## Validation
+## Escenarios de aceptación
 
-- Exploration flow: favorite route, duplicate rename, preflight, pause, resume, partial result and failed-only retry.
-- Responsive widths: 390, 768, 1024 and 1488 pixels without page-level horizontal overflow.
-- Keyboard and semantic structure: radio groups, fieldsets, labelled regions and disabled conflict continuation.
-- Automated coverage: planner policies, preflight blocking, retry preservation, gateway authorization and private-storage request shape.
-- Automated coverage: combined filters, new/modified rules, schedule calculation, queue promotion, 90-day pruning and safe reports.
-- Automated coverage: a synthetic 25,000-item tree renders through a bounded virtual window.
-- Manual browser review: transfer center, schedules and history at 390, 768, 1024 and 1488 pixels without horizontal overflow or console errors.
+1. Recorrer exploración desde selección hasta resultado, incluyendo conflictos.
+2. Ejecutar «Solo comprobar» sin emitir mutaciones.
+3. Copiar y mover con confirmación reforzada, pausa, reanudación y cancelación.
+4. Reintentar solo fallos y conservar checkpoints completados.
+5. Probar favoritos, cierre, recuperación y eliminación de datos.
+6. Calcular programaciones única, diaria, semanal y mensual con zona horaria.
+7. Confirmar que mover no puede programarse y sincronizar nunca elimina.
+8. Probar token caducado, permisos insuficientes, cuota y fallo parcial.
+9. Validar Mi unidad y unidades compartidas en ambas direcciones con datos
+   sintéticos dedicados.
+
+## Límites verificados
+
+- 100 elementos por página, 10 mutaciones por lote y 5.000 selecciones guardadas.
+- Sin IDs, nombres, tokens ni payloads de trabajo persistidos en el navegador en
+  modo Google.
+- Restaurar un trabajo de movimiento vuelve a exigir confirmación.
+- Sin sustitución silenciosa de duplicados ni eliminación del destino.

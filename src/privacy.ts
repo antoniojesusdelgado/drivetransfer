@@ -4,7 +4,7 @@ import { normalizePublicEnvironmentValue } from "./environment";
 export type ConsentState = "pending" | "accepted" | "rejected";
 
 export interface PrivacyPreferences {
-  readonly version: 2;
+  readonly version: 3;
   readonly analytics: boolean;
   readonly decidedAt: string;
 }
@@ -17,7 +17,7 @@ export interface DataDeletionSummary {
 }
 
 const PREFERENCES_KEY = "driveTransfer.privacyPreferences";
-const CONSENT_VERSION = 2;
+const CONSENT_VERSION = 3;
 const GA_ID = normalizePublicEnvironmentValue(
   import.meta.env.VITE_GA_MEASUREMENT_ID,
 );

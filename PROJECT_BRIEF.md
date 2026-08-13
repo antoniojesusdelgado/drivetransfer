@@ -1,77 +1,52 @@
-# DriveTransfer product brief
+# Resumen de producto
 
-## Context
+## Propósito
 
-Economic justifications for publicly funded projects require assembling large volumes of supporting documentation: incoming invoices, expense sheets, receipts, employment contracts, payroll documents and their corresponding payment evidence. When those documents are distributed across Google Drive, moving them one by one into each project folder is slow and difficult to verify.
+DriveTransfer reduce el trabajo manual al organizar archivos entre carpetas de
+Google Drive. Reúne selección, comprobación previa, detección de conflictos,
+ejecución por lotes y resultados en un flujo controlado.
 
-DriveTransfer evolves the functional approach of a Google Apps Script tool that reduced this manual work by connecting a source folder and a destination folder, indexing the source hierarchy, allowing selective transfer, preventing duplicates and reporting the result.
+El repositorio es una recreación técnica personal desarrollada desde cero. No
+contiene código, documentos, datos, estructuras, métricas, procedimientos ni
+activos de empleadores, clientes u otras organizaciones.
 
-## Public replica
+## Personas usuarias
 
-The repository will reproduce the functional approach without exposing the operational environment that motivated it.
+- Personas que necesitan reorganizar un volumen elevado de archivos en Drive.
+- Equipos que requieren revisar destino, permisos y duplicados antes de copiar.
+- Usuarios de Google Workspace que trabajan con Mi unidad y unidades compartidas.
 
-- All examples and fixtures must be synthetic.
-- No real folder identifiers or file metadata may be committed.
-- No internal folder structure, naming convention or justification rule may be inferred or published.
-- The public project is technically independent and is not an official Foundation product.
+## Recorrido principal
 
-## Users
+```mermaid
+flowchart TD
+  A[Conectar Google o explorar] --> B[Elegir origen y destino]
+  B --> C[Seleccionar archivos y filtros]
+  C --> D[Comprobar permisos, cuotas y conflictos]
+  D --> E{Operación}
+  E -->|Solo comprobar| F[Informe sin cambios]
+  E -->|Copiar| G[Confirmar y ejecutar]
+  E -->|Mover| H[Confirmación reforzada]
+  H --> G
+  G --> I[Pausa, reanudación y verificación]
+  I --> J[Resultado e informe]
+```
 
-- Operations and project teams that organize supporting documentation.
-- Finance and administration teams that need traceability before submitting a justification.
-- Any Google Workspace user who needs controlled bulk transfers between Drive folders.
+## Principios del producto
 
-## Core workflow
+- Copiar es la acción predeterminada; mover nunca está preseleccionado.
+- Ninguna mutación ocurre sin una comprobación previa.
+- No se reemplazan ni eliminan archivos existentes de forma silenciosa.
+- Los reintentos conservan lo ya completado y evitan duplicados.
+- Las sincronizaciones añaden contenido o versiones fechadas, pero no borran.
+- Los datos de demostración son exclusivamente ficticios.
+- Los tokens, nombres e identificadores privados no se registran.
 
-1. The user authenticates with Google using minimum permissions.
-2. The user selects or enters an authorized source folder and destination folder.
-3. DriveTransfer validates access and prevents invalid source/destination combinations.
-4. The system indexes the source hierarchy using pagination and quota-aware batches.
-5. The user selects files or folders and chooses `Copy` or `Move`.
-6. A dry run displays totals, duplicates, permission issues and expected changes.
-7. The user confirms the operation. `Move` requires an additional explicit warning.
-8. A resumable job processes the selection and reports progress.
-9. The result separates completed, skipped, duplicated and failed items.
+## Criterios de aceptación
 
-## Duplicate policy
-
-The initial design must compare stable Drive identifiers where available and use a documented fallback based on normalized name, parent path, MIME type and size. Hashing should only be considered when the API and file type make it reliable and its cost is justified.
-
-Duplicate outcomes must be explicit:
-
-- Skip existing file.
-- Copy with a renamed destination, if the user selects that policy.
-- Replace only when Google Drive semantics and permissions allow it and the user confirms it.
-
-Silent overwrite is not permitted.
-
-## Safety requirements
-
-- Copy is the default operation; move is never preselected.
-- A dry run is mandatory before mutation.
-- Source and destination cannot be the same folder.
-- The destination cannot create a recursive move relationship with the source.
-- Partial failures must not corrupt the completed portion of a job.
-- Retries must avoid duplicating items already completed.
-- Logs and analytics must not expose document names, folder IDs or tokens.
-- OAuth tokens and secrets must remain outside the client and repository.
-
-## MVP acceptance criteria
-
-- A synthetic demo can index and render a nested folder tree.
-- Users can select individual files, folders and all descendants.
-- Copy and move plans show accurate counts before confirmation.
-- Duplicate items are identified and skipped according to the selected policy.
-- Progress and final results remain understandable with thousands of items.
-- Unit tests cover selection propagation, duplicate decisions and resumable execution.
-- The UI is keyboard accessible and usable on desktop and mobile.
-
-## Confirmed MVP decisions
-
-- Support My Drive and Shared Drives, including compatible cross-space transfers.
-- Include real OAuth integration in the initial MVP.
-- Retain Apps Script plus `clasp` as the initial target while keeping the domain runtime-independent.
-- Use a synthetic Drive tree for the public demo and automated tests.
-- Deliver the synthetic workflow before connecting a development Google account.
-
-The OAuth implementation must test whether `drive.file` provides complete access to a selected folder subtree. If it does not, the MVP will use the restricted `drive` scope and complete the required verification work. See [ARCHITECTURE.md](ARCHITECTURE.md).
+- Flujo completo en modo exploración y con una cuenta de desarrollo.
+- Mi unidad y unidades compartidas en ambas direcciones.
+- Árboles grandes con selección parcial, filtros y virtualización.
+- Errores parciales, cuotas, permisos y sesiones caducadas comprensibles.
+- Interfaz accesible y responsive en móvil, tablet y escritorio.
+- Pruebas automáticas de planificación, idempotencia, seguridad y recuperación.
