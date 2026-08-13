@@ -30,7 +30,11 @@ for (const functionName of requiredFunctions) {
 if (!html.includes('<div id="root"></div>') || /src="\.\/assets\//.test(html)) {
   throw new Error("Apps Script HTML is not a self-contained client bundle");
 }
-if (!manifest.oauthScopes?.includes("https://www.googleapis.com/auth/drive")) {
+if (
+  !manifest.oauthScopes?.some(
+    (scope) => scope === "https://www.googleapis.com/auth/drive",
+  )
+) {
   throw new Error("Drive OAuth scope is missing from the generated manifest");
 }
 const driveService = manifest.dependencies?.enabledAdvancedServices?.find(
