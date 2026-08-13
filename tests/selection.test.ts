@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { syntheticSourceTree } from "../src/demo/fixture";
+import { syntheticSourceTree } from "../src/explore/fixture";
 import { selectionState, toggleSelection } from "../src/domain/selection";
 
 describe("hierarchical selection", () => {
