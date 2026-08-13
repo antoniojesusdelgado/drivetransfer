@@ -56,8 +56,7 @@ de los archivos; Google Drive realiza la copia o movimiento internamente.
   crítica.
 - Producción: rutas legales, sitemap, HTTPS y cabeceras de seguridad verificados
   en `https://drivetransfer.app`.
-- Apps Script: despliegue estable `DriveTransfer 1.0.1` actualizado a la versión
-  10.
+- Apps Script: despliegue estable `DriveTransfer 1.0.1` actualizado a la versión 10.
 
 ## Riesgo residual
 
