@@ -385,6 +385,12 @@ export default function App() {
   const pauseRequested = useRef(false);
   const cancelRequested = useRef(false);
 
+  useEffect(() => {
+    if (mode === "landing") return;
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [mode, phase, workspaceView]);
+
   const selectedCount = selectedIds.size;
   const filesReady =
     mode === "explore" ||
@@ -1727,12 +1733,16 @@ export default function App() {
                   <FolderSimple weight="duotone" />
                   <div>
                     <small>Desde</small>
-                    <strong>{sourceFolder?.name}</strong>
+                    <strong title={sourceFolder?.name}>
+                      {sourceFolder?.name}
+                    </strong>
                   </div>
                   <ArrowRight />
                   <div>
                     <small>Hasta</small>
-                    <strong>{destinationFolder?.name}</strong>
+                    <strong title={destinationFolder?.name}>
+                      {destinationFolder?.name}
+                    </strong>
                   </div>
                 </div>
                 <div className="safety-note">

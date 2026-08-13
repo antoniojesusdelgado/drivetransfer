@@ -690,12 +690,14 @@ button:disabled {
 }
 
 .workspace-heading h1 {
+  max-width: 100%;
   color: var(--green);
   font-family: "DM Serif Display", serif;
   font-size: clamp(2.25rem, 5vw, 4.2rem);
   font-weight: 400;
   line-height: 1;
   margin: 0 0 0.55rem;
+  overflow-wrap: anywhere;
 }
 
 .workspace-heading span {
@@ -754,6 +756,13 @@ button:disabled {
   min-width: 0;
 }
 
+.job-card__main > div,
+.schedule-card > div,
+.history-row > *,
+.progress-card__header > div {
+  min-width: 0;
+}
+
 .job-card h2,
 .schedule-card h2 {
   color: var(--green);
@@ -765,6 +774,17 @@ button:disabled {
 .schedule-card p {
   color: var(--muted);
   margin: 0;
+}
+
+.job-card h2,
+.job-card p,
+.schedule-card h2,
+.schedule-card p,
+.history-row strong,
+.history-row small,
+.progress-card__header strong,
+.progress-card__header span {
+  overflow-wrap: anywhere;
 }
 
 .status-dot {
@@ -1655,6 +1675,7 @@ button:disabled {
 }
 
 .legal-hero h1 {
+  max-width: 100%;
   margin: 0;
   color: var(--green);
   font-family: "DM Serif Display", Georgia, serif;
@@ -1662,6 +1683,7 @@ button:disabled {
   font-weight: 400;
   line-height: 1;
   letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
 }
 
 .legal-hero > span {
@@ -1926,10 +1948,16 @@ button:disabled {
 
 .transfer-settings,
 .review-action {
+  min-width: 0;
+  max-width: 100%;
   position: sticky;
   top: 112px;
   display: grid;
   gap: 22px;
+}
+
+.review-action {
+  overflow: hidden;
 }
 
 .command-switch {
@@ -2043,6 +2071,7 @@ button:disabled {
 }
 
 .safety-note {
+  min-width: 0;
   padding: 14px;
   border-radius: 13px;
   display: flex;
@@ -2057,7 +2086,9 @@ button:disabled {
 }
 
 .safety-note p {
+  min-width: 0;
   margin: 0;
+  overflow-wrap: anywhere;
   font-size: 13px;
   line-height: 1.5;
 }
@@ -2249,10 +2280,15 @@ th {
 }
 
 .route-summary {
+  min-width: 0;
   display: grid;
-  grid-template-columns: 34px 1fr 24px 1fr;
+  grid-template-columns: 34px minmax(0, 1fr) 24px minmax(0, 1fr);
   gap: 9px;
   align-items: center;
+}
+
+.route-summary > div {
+  min-width: 0;
 }
 
 .route-summary strong {
@@ -3106,7 +3142,8 @@ progress::-webkit-progress-value {
   }
 
   .legal-hero h1 {
-    font-size: clamp(42px, 14vw, 60px);
+    font-size: clamp(40px, 12vw, 60px);
+    word-break: break-word;
   }
 
   .legal-hero > span {

@@ -1,22 +1,21 @@
-# DriveTransfer 1.0.1
+# DriveTransfer 1.0.2
 
-Versión pública de cierre para portfolio.
+Actualización de estabilidad, autorización con Google y presentación responsive.
 
 ## Cambios
 
-- Nueva página independiente `/transparencia-ia` y enlace legal discreto.
-- Distintivo europeo visible únicamente dentro de esa página.
-- Revalidación reforzada de padre, tipo, tamaño y resultados idempotentes.
-- Índices privados filtrados y documentos versionados con validación estricta.
-- Documentación técnica, diagramas y políticas consolidados en español.
-- Automatizaciones de calidad, seguridad, CodeQL y dependencias para GitHub.
+- Añadido el permiso privado de `appDataFolder` al flujo de autorización.
+- Corregidos los desbordamientos de nombres largos en revisión y confirmación.
+- Ajustados los títulos legales para pantallas móviles estrechas.
+- Restablecida la posición de desplazamiento al cambiar de fase o sección.
+- Revalidada la interfaz en 390, 768, 1024 y 1488 píxeles.
 
 ## Seguridad
 
-- El contenido de archivos permanece en Google Drive y nunca se ejecuta en la
+- El contenido de los archivos permanece en Google Drive y nunca se ejecuta en
   aplicación.
-- Límites por usuario y globales, lotes de diez y locks para mutaciones.
-- Tokens en memoria, errores seguros, CSV neutralizado y cabeceras defensivas.
+- Los tokens OAuth se mantienen únicamente en memoria.
+- Los datos privados de DriveTransfer se aíslan en `appDataFolder`.
 
 ## Limitaciones conocidas
 

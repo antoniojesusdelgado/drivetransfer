@@ -3,6 +3,7 @@ import { normalizePublicEnvironmentValue } from "../../environment";
 const GOOGLE_IDENTITY_SCRIPT_ID = "google-identity-services";
 const GOOGLE_SCOPES = [
   "https://www.googleapis.com/auth/drive",
+  "https://www.googleapis.com/auth/drive.appdata",
   "https://www.googleapis.com/auth/userinfo.email",
   "https://www.googleapis.com/auth/script.send_mail",
   "https://www.googleapis.com/auth/script.scriptapp",
