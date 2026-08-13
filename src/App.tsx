@@ -47,7 +47,7 @@ import type {
   TransferSchedule,
   WorkspaceView,
 } from "./domain/types";
-import { syntheticDestination, syntheticSourceTree } from "./demo/fixture";
+import { syntheticDestination, syntheticSourceTree } from "./explore/fixture";
 import { createExecutionApiGateway } from "./integrations/drive/executionApiGateway";
 import {
   createDriveIndexSession,

@@ -39,7 +39,7 @@ flowchart TD
 - No se reemplazan ni eliminan archivos existentes de forma silenciosa.
 - Los reintentos conservan lo ya completado y evitan duplicados.
 - Las sincronizaciones añaden contenido o versiones fechadas, pero no borran.
-- Los datos de demostración son exclusivamente ficticios.
+- Los datos del modo exploración son exclusivamente ficticios.
 - Los tokens, nombres e identificadores privados no se registran.
 
 ## Criterios de aceptación

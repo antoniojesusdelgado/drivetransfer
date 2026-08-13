@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { syntheticDestination, syntheticSourceTree } from "../src/demo/fixture";
+import {
+  syntheticDestination,
+  syntheticSourceTree,
+} from "../src/explore/fixture";
 import { buildTransferPlan } from "../src/domain/planner";
 
 describe("transfer planning", () => {

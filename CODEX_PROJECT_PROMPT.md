@@ -1,6 +1,6 @@
 # Contexto inicial del proyecto
 
-DriveTransfer nació como una recreación técnica personal para demostrar una forma
+DriveTransfer nació como una solución técnica personal que presenta una forma
 segura de organizar grandes volúmenes de archivos en Google Drive. El repositorio
 público se desarrolló desde cero y no reproduce código, documentos, datos,
 estructuras, métricas ni procedimientos de ninguna organización.
