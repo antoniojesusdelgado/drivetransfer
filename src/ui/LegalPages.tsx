@@ -49,10 +49,10 @@ const documents: Record<LegalRoute, LegalDocument> = {
         ],
       },
       {
-        title: "3. Derechos, seguridad e IA",
+        title: "3. Derechos y seguridad",
         paragraphs: [
           "Puedes solicitar gratuitamente acceso, rectificación, supresión, limitación, oposición o portabilidad, y retirar cualquier consentimiento. Responderemos normalmente en un mes. También puedes reclamar ante la Agencia Española de Protección de Datos.",
-          "Aplicamos validación de entradas, permisos, límites de uso, operaciones por lotes y errores seguros. DriveTransfer fue desarrollado con asistencia de OpenAI Codex bajo dirección y revisión humana. Codex no forma parte del producto en ejecución ni recibe archivos, metadatos, identificadores o tokens de sus usuarios.",
+          "Aplicamos validación de entradas, permisos, límites de uso, operaciones por lotes y errores seguros. DriveTransfer no descarga ni ejecuta el contenido de los archivos: Google Drive realiza las copias y movimientos dentro de su propia plataforma.",
         ],
       },
     ],
@@ -61,7 +61,7 @@ const documents: Record<LegalRoute, LegalDocument> = {
     eyebrow: "Datos y transparencia",
     title: "Procedencia de los datos",
     intro:
-      "De dónde procede la información mostrada y cómo se utilizó inteligencia artificial durante el desarrollo.",
+      "De dónde procede la información mostrada y qué control mantienes sobre ella.",
     sections: [
       {
         title: "1. Archivos y ejemplos",
@@ -71,16 +71,7 @@ const documents: Record<LegalRoute, LegalDocument> = {
         ],
       },
       {
-        id: "desarrollo-asistido-por-ia",
-        title: "2. Desarrollo asistido por IA",
-        paragraphs: [
-          "El código, las pruebas, la documentación y partes del diseño se elaboraron con asistencia de OpenAI Codex, utilizado mediante el entorno ChatGPT/Codex. El titular dirigió, revisó y editó el resultado y asume la responsabilidad editorial y técnica de la publicación.",
-          "Codex se utilizó durante el desarrollo y no forma parte del producto en ejecución. Ningún archivo, nombre, metadato, token o contenido de las cuentas de Google de los usuarios se envía a OpenAI.",
-          "El distintivo de IA del pie pertenece al conjunto publicado por la Unión Europea y se usa voluntariamente como medida de transparencia. No equivale a una certificación, aprobación ni garantía de cumplimiento por parte de la Unión Europea.",
-        ],
-      },
-      {
-        title: "3. Origen y control",
+        title: "2. Origen y control",
         paragraphs: [
           "Es una recreación técnica personal desarrollada desde cero. No contiene código, documentos, datos, diseños internos, secretos empresariales ni activos de empleadores o clientes, ni implica su patrocinio o aprobación.",
           "Antes de modificar Drive se muestran origen, destino, contenido y bloqueos. Nunca se sustituyen archivos silenciosamente y mover requiere una confirmación adicional.",
@@ -109,10 +100,9 @@ const documents: Record<LegalRoute, LegalDocument> = {
         ],
       },
       {
-        title: "3. Propiedad, marcas e IA",
+        title: "3. Propiedad y marcas",
         paragraphs: [
           "El código, diseño y textos propios están protegidos por la normativa aplicable. Google y sus productos pertenecen a sus titulares; la interoperabilidad no implica afiliación o aprobación.",
-          "El desarrollo contó con asistencia de OpenAI Codex y revisión humana. El distintivo europeo de IA se utiliza voluntariamente con finalidad informativa y no equivale a una certificación oficial.",
           "Se aplica la legislación española, sin limitar los derechos imperativos que correspondan al usuario.",
         ],
       },
@@ -163,6 +153,27 @@ const documents: Record<LegalRoute, LegalDocument> = {
       },
     ],
   },
+  "/transparencia-ia": {
+    eyebrow: "Transparencia",
+    title: "Transparencia sobre IA",
+    intro:
+      "Cómo se utilizó inteligencia artificial durante el desarrollo de DriveTransfer.",
+    sections: [
+      {
+        title: "1. Desarrollo asistido",
+        paragraphs: [
+          "El código, las pruebas, la documentación y partes del diseño se elaboraron con asistencia de ChatGPT Codex. Antonio Jesús Delgado Briones dirigió, revisó y editó el resultado y asume la responsabilidad editorial y técnica de esta publicación.",
+          "Codex se utilizó durante el desarrollo y no forma parte de DriveTransfer cuando la aplicación está en funcionamiento. Ningún archivo, nombre, metadato, identificador o token de las cuentas de Google de los usuarios se envía a OpenAI.",
+        ],
+      },
+      {
+        title: "2. Distintivo europeo",
+        paragraphs: [
+          "El distintivo procede del conjunto oficial publicado por la Comisión Europea y se utiliza voluntariamente como medida adicional de transparencia. No representa una certificación, aprobación ni garantía de cumplimiento por parte de la Unión Europea.",
+        ],
+      },
+    ],
+  },
 };
 
 export function LegalLinks({
@@ -180,6 +191,7 @@ export function LegalLinks({
       <a href="/aviso-legal">Aviso legal</a>
       <a href="/cookies">Cookies</a>
       <a href="/eliminar-datos">Eliminar datos</a>
+      <a href="/transparencia-ia">Transparencia sobre IA</a>
       <PrivacyPreferencesButton />
     </nav>
   );
@@ -206,7 +218,7 @@ export function LegalPage({ route }: { readonly route: LegalRoute }) {
           <p>{document.eyebrow}</p>
           <h1>{document.title}</h1>
           <span>{document.intro}</span>
-          <small>Versión 1.0.0 · vigente desde el 12 de agosto de 2026</small>
+          <small>Versión 1.0.1 · vigente desde el 13 de agosto de 2026</small>
         </div>
         <div className="legal-content">
           {document.sections.map((section) => (
@@ -222,6 +234,10 @@ export function LegalPage({ route }: { readonly route: LegalRoute }) {
                   ))}
                 </ul>
               ) : null}
+              {route === "/transparencia-ia" &&
+              section.title === "2. Distintivo europeo" ? (
+                <AiTransparencyMark />
+              ) : null}
             </section>
           ))}
           <aside className="legal-contact">
@@ -234,12 +250,9 @@ export function LegalPage({ route }: { readonly route: LegalRoute }) {
         </div>
       </article>
       <footer className="legal-footer">
-        <div className="legal-footer__identity">
-          <p>
-            © 2026 Antonio Jesús Delgado Briones. Todos los derechos reservados.
-          </p>
-          <AiTransparencyMark />
-        </div>
+        <p>
+          © 2026 Antonio Jesús Delgado Briones. Todos los derechos reservados.
+        </p>
         <LegalLinks compact />
       </footer>
     </main>

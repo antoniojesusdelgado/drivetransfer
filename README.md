@@ -1,40 +1,47 @@
 # DriveTransfer
 
-**Versión 1.0.0** · [drivetransfer.app](https://drivetransfer.app)
+**Versión 1.0.1** · [drivetransfer.app](https://drivetransfer.app)
 
-DriveTransfer es una recreación técnica personal, gratuita y no comercial,
-desarrollada desde cero para portfolio. No contiene código, documentos, datos,
-procedimientos internos ni activos de empleadores o clientes, y no está
-patrocinada ni respaldada por Google.
+DriveTransfer permite elegir, revisar y transferir archivos entre carpetas de
+Google Drive con una vista previa obligatoria. Funciona con Mi unidad y unidades
+compartidas, mantiene la copia como opción predeterminada y exige una
+confirmación adicional para mover.
 
-La información legal pública está disponible en `/privacidad`,
-`/procedencia-datos`, `/aviso-legal`, `/cookies` y `/eliminar-datos`.
+Es un proyecto personal, gratuito y no comercial de portfolio. Todos los
+ejemplos, pruebas y capturas públicas emplean datos ficticios. No está afiliado,
+patrocinado ni aprobado por Google ni por empleadores o clientes.
 
-DriveTransfer ayuda a elegir, revisar y transferir archivos entre carpetas de Google Drive. Admite My Drive y unidades compartidas, detecta duplicados antes de empezar y mantiene copia y movimiento como acciones separadas.
+## Funciones principales
 
-## Experiencia
+- OAuth mediante Google Identity Services y selección con Google Picker.
+- Exploración completa sin iniciar sesión.
+- Árbol accesible, búsqueda, filtros y selección masiva.
+- Detección y resolución explícita de conflictos, sin sustituciones silenciosas.
+- Modo «Solo comprobar», copia, movimiento confirmado y sincronización
+  conservadora.
+- Trabajos reanudables, cola, pausa, cancelación, reintentos e informes seguros.
+- Favoritos, programaciones e historial privado durante 90 días.
+- Eliminación de los datos de DriveTransfer sin borrar los archivos transferidos.
 
-- Acceso con Google mediante Google Identity Services y Google Picker.
-- Recorrido completo sin iniciar sesión usando archivos de ejemplo.
-- Selección jerárquica, búsqueda y acciones masivas.
-- Vista previa obligatoria antes de cualquier cambio.
-- Copia predeterminada y confirmación adicional para mover.
-- Progreso pausable, reintentos seguros e informe final sin identificadores internos.
+## Arquitectura resumida
 
-- Comprobación previa de volumen, permisos, conflictos y tiempo estimado.
-- Reglas de duplicados para omitir, conservar ambos o detenerse a revisar.
-- Rutas favoritas privadas, reanudación durante siete días y avisos al terminar.
-- Reintento exclusivo de los elementos fallidos sin repetir los completados.
-- Centro privado con trabajos activos, en cola, pausados y terminados.
-- Modo «Solo comprobar», filtros combinables y resolución individual o masiva de conflictos.
-- Programaciones únicas, diarias, semanales y mensuales para copias y sincronizaciones conservadoras.
-- Historial privado de 90 días e informes JSON/CSV sin identificadores internos.
+```mermaid
+flowchart LR
+  UI[React y Vite] --> GIS[Google Identity Services]
+  UI --> Picker[Google Picker]
+  UI --> API[Apps Script Execution API]
+  API --> Validacion[Validación, límites y bloqueos]
+  Validacion --> Drive[Google Drive API v3]
+  Validacion --> Datos[appDataFolder privado]
+```
 
-## Arquitectura
+El token OAuth permanece únicamente en memoria. El navegador llama directamente
+a `scripts.run`; Apps Script vuelve a consultar Drive y revalida permisos,
+capacidades, metadatos, rutas y límites antes de cada mutación. DriveTransfer no
+descarga ni ejecuta los bytes de los documentos.
 
-El frontend React/Vite se carga de forma independiente. Cuando una persona conecta Google, conserva el token de acceso únicamente en memoria y llama a un ejecutable de Apps Script mediante `scripts.run`. Apps Script vuelve a validar cada solicitud y ejecuta Drive API v3 con los permisos de esa persona.
-
-Consulta [ARCHITECTURE.md](ARCHITECTURE.md) para las decisiones de seguridad y [DEPLOYMENT.md](DEPLOYMENT.md) para configurar un entorno de desarrollo.
+Consulta [Arquitectura](ARCHITECTURE.md), [Seguridad](SECURITY.md) y
+[Despliegue](DEPLOYMENT.md) para el detalle técnico.
 
 ## Desarrollo local
 
@@ -46,9 +53,11 @@ Copy-Item .env.example .env.local
 npm run dev
 ```
 
-Sin variables de Google, la experiencia de exploración continúa disponible y el botón de conexión muestra un aviso seguro.
+Las variables `VITE_*` se integran en el cliente y no deben contener secretos.
+La API key debe estar restringida por origen y exclusivamente a Google Picker
+API. Sin configuración de Google, el modo exploración continúa disponible.
 
-Comprobaciones:
+## Validación
 
 ```powershell
 npm run format
@@ -59,17 +68,28 @@ npm run build
 npm audit --audit-level=moderate
 ```
 
-## Privacidad
+La estrategia completa está en [Pruebas funcionales](functional-qa.md),
+[Seguridad y sistema](security-qa.md) y [Diseño responsive](design-qa.md).
 
-No incluyas credenciales, tokens, nombres reales, IDs de carpetas ni documentos privados en el repositorio, pruebas o capturas. Las variables `VITE_*` son identificadores públicos del cliente web; la API key debe limitarse por HTTP referrer y exclusivamente a Google Picker API.
+## Privacidad y transparencia
 
-La aplicación publica información para usuarios en `/privacidad`, `/procedencia-datos` y `/aviso-legal`. Revisa esos textos cuando cambien los permisos, los proveedores, la conservación o las funciones de DriveTransfer.
+La información pública está disponible en
+[Privacidad](https://drivetransfer.app/privacidad),
+[Procedencia de los datos](https://drivetransfer.app/procedencia-datos),
+[Aviso legal](https://drivetransfer.app/aviso-legal),
+[Cookies](https://drivetransfer.app/cookies),
+[Eliminar datos](https://drivetransfer.app/eliminar-datos) y
+[Transparencia sobre IA](https://drivetransfer.app/transparencia-ia).
 
-## Desarrollo asistido por IA
+No incluyas tokens, credenciales, nombres reales, IDs de Drive ni documentos
+privados en incidencias, pruebas o capturas.
 
-El proyecto se desarrolló con asistencia de OpenAI Codex mediante el entorno
-ChatGPT/Codex, bajo dirección, revisión y responsabilidad humana. Codex no forma
-parte de la aplicación en ejecución y ningún archivo, metadato, identificador o
-token de los usuarios se envía a OpenAI. Consulta
-`THIRD_PARTY_NOTICES.md` para la procedencia del distintivo europeo utilizado
-voluntariamente como medida de transparencia.
+## Derechos
+
+Copyright © 2026 Antonio Jesús Delgado Briones. Todos los derechos reservados.
+
+Este repositorio no incluye una licencia de software y no concede permiso para
+usar, copiar, modificar, distribuir o crear obras derivadas del código. Al ser
+público, GitHub permite visualizarlo y bifurcarlo conforme a sus propias
+condiciones, sin que ello otorgue una licencia adicional. Consulta
+[COPYRIGHT.md](COPYRIGHT.md).

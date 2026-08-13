@@ -5,7 +5,8 @@
     { "source": "/procedencia-datos", "destination": "/index.html" },
     { "source": "/aviso-legal", "destination": "/index.html" },
     { "source": "/cookies", "destination": "/index.html" },
-    { "source": "/eliminar-datos", "destination": "/index.html" }
+    { "source": "/eliminar-datos", "destination": "/index.html" },
+    { "source": "/transparencia-ia", "destination": "/index.html" }
   ],
   "headers": [
     {

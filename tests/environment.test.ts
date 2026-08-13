@@ -11,4 +11,10 @@ describe("public environment configuration", () => {
   it("returns an empty string for an absent value", () => {
     expect(normalizePublicEnvironmentValue(undefined)).toBe("");
   });
+
+  it("keeps public values literal instead of evaluating injected code", () => {
+    const payload = '<script>alert("xss")</script>';
+    expect(normalizePublicEnvironmentValue(payload)).toBe(payload);
+    expect(globalThis).not.toHaveProperty("xss");
+  });
 });

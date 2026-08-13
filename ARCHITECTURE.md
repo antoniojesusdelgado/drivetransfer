@@ -1,62 +1,125 @@
 # Arquitectura de DriveTransfer
 
-## Límites del producto
+## Componentes
 
-- My Drive y unidades compartidas están soportados como origen y destino.
-- Copiar es siempre la acción predeterminada.
-- Mover exige una confirmación adicional y una comprobación posterior en destino.
-- La vista previa es obligatoria; no se sobrescriben archivos de forma silenciosa.
-- Los tokens, nombres e IDs no se escriben en logs.
-
-## Flujo
-
-```text
-React UI
-  -> Google Identity Services (token temporal en memoria)
-  -> Google Picker (selección explícita)
-  -> Apps Script Execution API (scripts.run)
-  -> validación por usuario
-  -> Drive API v3
+```mermaid
+flowchart LR
+  subgraph Navegador
+    UI[React y Vite]
+    Memoria[Token temporal en memoria]
+    Preferencias[Preferencias locales no sensibles]
+  end
+  subgraph Google
+    GIS[Identity Services]
+    Picker[Picker]
+    Script[Apps Script Execution API]
+    Drive[Drive API v3]
+    AppData[appDataFolder privado]
+  end
+  UI --> GIS --> Memoria
+  UI --> Picker
+  Memoria --> Script
+  Script --> Drive
+  Script --> AppData
+  UI --> Preferencias
 ```
 
-El modo exploración usa el mismo dominio y las mismas pantallas mediante un ejecutor en memoria. No carga las bibliotecas de Google ni solicita permisos.
+El frontend público no depende de `google.script.run`. Con autorización, llama a
+`scripts.run` con el token en la cabecera `Authorization`. Apps Script ejecuta la
+Drive API con la identidad y permisos de esa persona.
 
-## Contratos
+## Flujo de transferencia
 
-`DriveRuntimeGateway` separa la interfaz de Google. Expone inspección de carpetas, lectura paginada, ejecución de lotes y verificación. Cada lote admite como máximo diez mutaciones.
+```mermaid
+sequenceDiagram
+  actor U as Usuario
+  participant W as Web
+  participant P as Google Picker
+  participant A as Apps Script
+  participant D as Drive API
+  U->>W: Conectar y elegir carpetas
+  W->>P: Abrir selector
+  P-->>W: Referencias autorizadas
+  W->>A: Inspeccionar y paginar
+  A->>D: Consultar permisos y metadatos
+  D-->>A: Estado actual
+  A-->>W: Árbol y comprobación previa
+  U->>W: Confirmar operación
+  loop lotes de hasta 10
+    W->>A: Ejecutar lote
+    A->>D: Revalidar y mutar
+    A-->>W: Checkpoints opacos
+  end
+  W->>A: Verificar resultados
+  A-->>W: Conteos seguros
+```
 
-Una operación incluye un identificador opaco, el elemento de origen y su ruta relativa. Apps Script no confía en esos datos: comprueba que el elemento sigue dentro del origen autorizado, que el destino no pertenece al árbol de origen y que nombres, tipos y permisos coinciden con Drive.
+## Validación y límites de confianza
+
+El navegador prepara la experiencia, pero no es una autoridad. Apps Script
+valida de nuevo IDs, nombres, MIME, tamaño conocido, padre, pertenencia al árbol,
+espacio, permisos, capacidades, destino y ciclos. Se rechazan esquemas, estados,
+identificadores y cargas fuera de los límites permitidos.
+
+React representa nombres externos como texto. No hay HTML dinámico, `eval`,
+carga de módulos proporcionados por usuarios ni ejecución de macros o bytes de
+archivos. Drive realiza las copias y movimientos internamente.
 
 ## Idempotencia y recuperación
 
-Las copias creadas por la aplicación reciben `appProperties.driveTransferOperationKey`. Antes de reintentar, DriveTransfer busca esa clave y reutiliza el resultado. Los movimientos nativos preservan las propiedades existentes y añaden la misma clave.
+Cada operación usa una clave opaca en `appProperties`. Un reintento solo reutiliza
+un resultado cuando la clave, el destino, el nombre, el tipo y el tamaño conocido
+coinciden. Los trabajos guardan manifiesto, selección y checkpoints por separado.
 
-Los límites temporales producen un estado reintentable. Pausar impide enviar lotes nuevos; una llamada ya iniciada termina de forma segura. Cancelar o cerrar la página no intenta revertir cambios completados.
+```mermaid
+stateDiagram-v2
+  [*] --> queued
+  queued --> running
+  running --> paused
+  paused --> running
+  running --> needs_attention
+  needs_attention --> running
+  running --> completed
+  queued --> cancelled
+  running --> cancelled
+  completed --> [*]
+  cancelled --> [*]
+```
 
-## Preferencias y continuidad
+Solo existe un trabajo activo por usuario. Los demás permanecen en cola y las
+mutaciones usan `LockService.getUserLock()` para evitar carreras.
 
-Antes de ejecutar, el plan calcula archivos, carpetas, tamaño conocido, bloqueos y una estimación orientativa. Los duplicados pueden omitirse, conservarse con un nombre nuevo o detenerse para revisión; nunca se reemplazan silenciosamente.
+## Persistencia privada
 
-`DriveRuntimeGateway` también expone favoritos y recuperación de trabajos. Las rutas favoritas y el estado mínimo de reanudación se guardan en `UserProperties`, separados por usuario. Los trabajos se dividen en fragmentos, se limitan a 5.000 selecciones, caducan tras siete días y se eliminan al completar o descartar.
+No existe una base de datos pública. `appDataFolder` conserva documentos JSON
+versionados y limitados a 450 KB. `UserProperties` mantiene únicamente índices
+pequeños, versión de esquema y referencia al trigger. Todo queda aislado por la
+cuenta de Google conectada.
 
-El navegador conserva únicamente el identificador opaco del trabajo. No guarda tokens, nombres ni IDs de Drive. Los avisos de finalización utilizan el permiso estándar del navegador y solo se solicitan cuando la persona los activa.
+```mermaid
+flowchart TD
+  S[Trabajo o programación] --> V[Validar esquema y tamaño]
+  V --> W[Escribir documento privado]
+  W --> R[Leer y verificar la copia]
+  R --> I[Actualizar índice pequeño]
+  I --> C[Checkpoint reanudable]
+```
 
-## Persistencia, cola y programaciones
+El historial se conserva durante 90 días. Los trabajos reanudables caducan a los
+7 días. La eliminación borra exclusivamente documentos, índices y triggers de
+DriveTransfer; no toca originales, copias ni destinos.
 
-El gateway también expone favoritos, centro de trabajos, programaciones, historial y recuperación. Los documentos privados se guardan versionados en appDataFolder; manifiesto, selección y checkpoints permanecen separados. UserProperties conserva únicamente índices pequeños, la versión del esquema y el identificador del trigger. La migración del formato anterior borra el original solo después de escribir y verificar la copia.
+## Programaciones
 
-Solo puede existir un trabajo en curso por usuario; el resto permanece en una cola ordenada. Un único trigger periódico por usuario activa el dispatcher, que usa LockService.getUserLock() para evitar carreras. Los trabajos extensos conservan checkpoints privados y continúan en ejecuciones posteriores.
+Un único dispatcher periódico por usuario reclama trabajos con lock. Las
+programaciones admiten copia o sincronización conservadora, nunca movimiento.
+Los archivos modificados generan una versión fechada y una desaparición en el
+origen no provoca borrado en el destino.
 
-Las programaciones admiten una ejecución, frecuencia diaria, semanal o mensual. Solo crean copias o sincronizaciones: mover continúa siendo una acción interactiva con confirmación reforzada. La sincronización es unidireccional y conservadora; añade archivos nuevos y crea una copia fechada de los modificados, sin retirar ni sustituir contenido del destino.
+## OAuth y permisos
 
-El historial se conserva durante 90 días y se poda automáticamente. Los avisos por correo son opcionales, se envían únicamente a la cuenta activa y la dirección no se persiste.
-
-## Movimiento entre espacios
-
-Los archivos compatibles se mueven actualizando sus padres. Una carpeta no puede pasar de My Drive a una unidad compartida mediante un único cambio de padre, por lo que se reconstruye el destino, se procesan primero los descendientes y solo se retira la carpeta de origen si ha quedado vacía. Si permanece cualquier elemento, el origen se conserva y el resultado requiere atención.
-
-## OAuth
-
-El MVP solicita `https://www.googleapis.com/auth/drive` para recorrer y modificar árboles completos seleccionados por la persona. Es un scope restringido: antes de abrir OAuth a usuarios externos será necesario completar la verificación de Google y revisar los requisitos aplicables.
-
-El token solo vive en memoria del navegador, se envía a `script.googleapis.com` mediante el encabezado `Authorization` y se revoca al salir. No se incluye en URLs, almacenamiento web, respuestas de error o telemetría.
+El acceso a subárboles arbitrarios requiere el permiso restringido
+`https://www.googleapis.com/auth/drive`. La apertura general permanece
+condicionada a la verificación de Google y a cualquier evaluación adicional que
+solicite. El token no se guarda en URLs, almacenamiento persistente, errores ni
+telemetría.

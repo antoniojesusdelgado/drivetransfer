@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Comunicar una vulnerabilidad
+    url: mailto:contacto@antoniodelgado.tech
+    about: No publiques información sensible; utiliza este canal privado.
