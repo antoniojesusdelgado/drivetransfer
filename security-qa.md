@@ -50,7 +50,14 @@ de los archivos; Google Drive realiza la copia o movimiento internamente.
 - Búsqueda de secretos, HTML dinámico, ejecución de código y logs sensibles: sin
   hallazgos en código de producción.
 - Responsive local en 390, 768, 1024 y 1488 px: sin desbordamiento horizontal.
-- CodeQL: configurado como control obligatorio del PR y de `main`.
+- GitHub Actions: Calidad y CodeQL superados en el PR de publicación y en el
+  parche final de `main`.
+- CodeQL sobre `main`: 0 alertas abiertas y 0 hallazgos de severidad alta o
+  crítica.
+- Producción: rutas legales, sitemap, HTTPS y cabeceras de seguridad verificados
+  en `https://drivetransfer.app`.
+- Apps Script: despliegue estable `DriveTransfer 1.0.1` actualizado a la versión
+  10.
 
 ## Riesgo residual
 
