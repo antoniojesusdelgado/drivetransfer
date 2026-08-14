@@ -2,14 +2,35 @@
 
 **Versión 1.0.2** · [drivetransfer.app](https://drivetransfer.app)
 
+[![Versión publicada](https://img.shields.io/github/v/release/antoniojesusdelgado/drivetransfer?label=versi%C3%B3n)](https://github.com/antoniojesusdelgado/drivetransfer/releases/latest)
+[![Calidad](https://github.com/antoniojesusdelgado/drivetransfer/actions/workflows/quality.yml/badge.svg)](https://github.com/antoniojesusdelgado/drivetransfer/actions/workflows/quality.yml)
+[![CodeQL](https://github.com/antoniojesusdelgado/drivetransfer/actions/workflows/codeql.yml/badge.svg)](https://github.com/antoniojesusdelgado/drivetransfer/actions/workflows/codeql.yml)
+![Derechos reservados](https://img.shields.io/badge/licencia-derechos%20reservados-0b5b4f)
+
 DriveTransfer permite elegir, revisar y transferir archivos entre carpetas de
 Google Drive con una vista previa obligatoria. Funciona con Mi unidad y unidades
 compartidas, mantiene la copia como opción predeterminada y exige una
 confirmación adicional para mover.
 
-Es un proyecto personal, gratuito y no comercial de portfolio. Todos los
+Es un proyecto personal, gratuito y no comercial de portafolio. Todos los
 ejemplos, pruebas y capturas públicas emplean datos ficticios. No está afiliado,
 patrocinado ni aprobado por Google ni por empleadores o clientes.
+
+[Probar DriveTransfer](https://drivetransfer.app) ·
+[Ver la última versión](https://github.com/antoniojesusdelgado/drivetransfer/releases/latest) ·
+[Consultar seguridad](SECURITY.md) · [Configurar el proyecto](DEPLOYMENT.md)
+
+![Portada de DriveTransfer](artifacts/design-qa/landing-desktop-after.png)
+
+## Contenido
+
+- [Funciones principales](#funciones-principales)
+- [Cómo funciona](#cómo-funciona)
+- [Arquitectura resumida](#arquitectura-resumida)
+- [Desarrollo local](#desarrollo-local)
+- [Validación](#validación)
+- [Privacidad y transparencia](#privacidad-y-transparencia)
+- [Derechos](#derechos)
 
 ## Funciones principales
 
@@ -22,6 +43,20 @@ patrocinado ni aprobado por Google ni por empleadores o clientes.
 - Trabajos reanudables, cola, pausa, cancelación, reintentos e informes seguros.
 - Favoritos, programaciones e historial privado durante 90 días.
 - Eliminación de los datos de DriveTransfer sin borrar los archivos transferidos.
+
+## Cómo funciona
+
+```mermaid
+flowchart LR
+  A[Elegir origen y destino] --> B[Seleccionar contenido]
+  B --> C[Comprobar permisos y conflictos]
+  C --> D[Confirmar la operación]
+  D --> E[Transferir por lotes]
+  E --> F[Verificar y descargar el informe]
+```
+
+La copia es la opción predeterminada. Mover exige una confirmación adicional y
+las sincronizaciones nunca eliminan contenido del destino.
 
 ## Arquitectura resumida
 
@@ -45,7 +80,7 @@ Consulta [Arquitectura](ARCHITECTURE.md), [Seguridad](SECURITY.md) y
 
 ## Desarrollo local
 
-Requisitos: Node.js 24 y npm 11 o versiones compatibles.
+Requisitos: Node.js 24 y npm 11, o versiones compatibles.
 
 ```powershell
 npm install
@@ -54,8 +89,9 @@ npm run dev
 ```
 
 Las variables `VITE_*` se integran en el cliente y no deben contener secretos.
-La API key debe estar restringida por origen y exclusivamente a Google Picker
-API. Sin configuración de Google, el modo exploración continúa disponible.
+La clave de API debe estar restringida por origen y exclusivamente a Google
+Picker API. Sin configuración de Google, el modo exploración continúa
+disponible.
 
 ## Validación
 
@@ -69,7 +105,7 @@ npm audit --audit-level=moderate
 ```
 
 La estrategia completa está en [Pruebas funcionales](functional-qa.md),
-[Seguridad y sistema](security-qa.md) y [Diseño responsive](design-qa.md).
+[Seguridad y sistema](security-qa.md) y [Diseño adaptable](design-qa.md).
 
 ## Privacidad y transparencia
 

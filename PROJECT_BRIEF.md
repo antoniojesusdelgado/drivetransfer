@@ -48,5 +48,5 @@ flowchart TD
 - Mi unidad y unidades compartidas en ambas direcciones.
 - Árboles grandes con selección parcial, filtros y virtualización.
 - Errores parciales, cuotas, permisos y sesiones caducadas comprensibles.
-- Interfaz accesible y responsive en móvil, tablet y escritorio.
+- Interfaz accesible y adaptable en móvil, tableta y escritorio.
 - Pruebas automáticas de planificación, idempotencia, seguridad y recuperación.

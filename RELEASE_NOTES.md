@@ -1,6 +1,6 @@
 # DriveTransfer 1.0.2
 
-Actualización de estabilidad, autorización con Google y presentación responsive.
+Actualización de estabilidad, autorización con Google y presentación adaptable.
 
 ## Cambios
 
@@ -13,7 +13,7 @@ Actualización de estabilidad, autorización con Google y presentación responsi
 ## Seguridad
 
 - El contenido de los archivos permanece en Google Drive y nunca se ejecuta en
-  aplicación.
+  la aplicación.
 - Los tokens OAuth se mantienen únicamente en memoria.
 - Los datos privados de DriveTransfer se aíslan en `appDataFolder`.
 

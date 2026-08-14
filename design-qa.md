@@ -1,4 +1,4 @@
-# Validación de diseño y responsive
+# Validación de diseño adaptable
 
 Fecha: 13 de agosto de 2026
 
@@ -11,7 +11,7 @@ Versión: 1.0.2
 - Cabecera legal: `legal-desktop-header-after.png` y
   `legal-mobile-header-after.png`.
 - Navegación móvil: `workspace-mobile-selector.png`.
-- Flujo responsive final: `artifacts/responsive-audit/after/`.
+- Flujo adaptable final: `artifacts/responsive-audit/after/`.
 - Cookies en móvil tras corregir el ajuste del título:
   `artifacts/responsive-audit/after/cookies-mobile-final.png`.
 
@@ -33,11 +33,11 @@ ficticio y no muestran cuentas, documentos ni identificadores reales.
   conserva una posición de desplazamiento perteneciente a la vista anterior.
 - Páginas legales: el título «Cookies y almacenamiento» reajusta correctamente
   en móvil sin generar anchura horizontal adicional.
-- Workspace: centro, programaciones, historial y privacidad.
+- Área de trabajo: centro, programaciones, historial y privacidad.
 - Sin desbordamiento horizontal en 390, 768, 1024 y 1488 px.
-- Sin error overlay ni mensajes de consola en el recorrido comprobado.
+- Sin paneles de error ni mensajes de consola en el recorrido comprobado.
 - Navegación por teclado, foco visible y movimiento reducido conservados.
 - P0, P1 y P2: ninguno.
 - P3: diferencias menores propias de rasterizado y tipografía entre navegadores.
 
-`final result: passed`
+`resultado final: superado`

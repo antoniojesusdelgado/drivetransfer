@@ -16,7 +16,7 @@ datos de terceros.
 - El token OAuth existe solo en memoria y se envía únicamente a Google.
 - Apps Script revalida todas las referencias y permisos antes de mutar Drive.
 - Las lecturas se limitan a 100 elementos y las mutaciones a 10 por lote.
-- Hay límites por usuario y globales, además de locks para evitar concurrencia.
+- Hay límites por usuario y globales, además de bloqueos para evitar concurrencia.
 - Los reintentos son idempotentes mediante claves opacas.
 - React escapa el contenido externo y no se admite HTML ni código ejecutable.
 - Los informes CSV neutralizan fórmulas y no incluyen identificadores internos.

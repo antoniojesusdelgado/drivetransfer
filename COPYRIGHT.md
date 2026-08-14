@@ -2,8 +2,8 @@
 
 Copyright © 2026 Antonio Jesús Delgado Briones. Todos los derechos reservados.
 
-Este repositorio se publica para consulta como proyecto profesional de portfolio. No incluye
-una licencia de software y, por tanto, no concede permiso para usar, copiar,
+Este repositorio se publica para consulta como proyecto profesional de
+portafolio. No incluye una licencia de software y, por tanto, no concede permiso para usar, copiar,
 modificar, distribuir, sublicenciar, vender o crear obras derivadas del código,
 el diseño o la documentación.
 

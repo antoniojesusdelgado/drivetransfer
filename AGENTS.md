@@ -8,7 +8,7 @@
 
 ## Límites del producto
 
-- DriveTransfer es un proyecto personal e independiente de portfolio.
+- DriveTransfer es un proyecto personal e independiente de portafolio.
 - Usar únicamente árboles, archivos y metadatos ficticios en pruebas y capturas.
 - No incluir IDs, documentos, credenciales, procedimientos ni datos reales.
 - No atribuir patrocinio, propiedad o aprobación a Google ni a terceros.
@@ -16,7 +16,7 @@
 ## Ingeniería
 
 - Inspeccionar rama, estado y arquitectura antes de modificar.
-- Mantener ámbitos OAuth mínimos y tokens fuera de almacenamiento y logs.
+- Mantener ámbitos OAuth mínimos y tokens fuera de almacenamiento y registros.
 - Separar descubrimiento, selección, conflictos, ejecución y resultados.
 - Copiar es predeterminado; mover exige confirmación adicional.
 - Ejecutar una comprobación previa antes de cualquier mutación.
@@ -31,6 +31,6 @@
 
 ## Validación
 
-- Ejecutar formato, lint, tipos, pruebas y build.
+- Ejecutar formato, análisis estático, tipos, pruebas y compilación.
 - Probar duplicados, permisos, fallos parciales, reintentos y confirmación.
-- Revisar accesibilidad, responsive, privacidad y seguridad en cada flujo público.
+- Revisar accesibilidad, diseño adaptable, privacidad y seguridad en cada flujo público.

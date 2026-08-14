@@ -9,10 +9,10 @@
 ## Validación
 
 - [ ] Formato
-- [ ] Lint
+- [ ] Análisis estático
 - [ ] TypeScript
 - [ ] Pruebas
-- [ ] Build web y Apps Script
+- [ ] Compilación web y Apps Script
 - [ ] Revisión de seguridad y datos ficticios
 
 ## Privacidad
