@@ -10,10 +10,10 @@ flowchart LR
     Preferencias[Preferencias locales no sensibles]
   end
   subgraph Google
-    GIS[Identity Services]
-    Picker[Picker]
-    Script[Apps Script Execution API]
-    Drive[Drive API v3]
+    GIS[Google Identity Services]
+    Picker[Google Picker]
+    Script[API de ejecución de Apps Script]
+    Drive[Google Drive API v3]
     AppData[appDataFolder privado]
   end
   UI --> GIS --> Memoria
@@ -24,7 +24,7 @@ flowchart LR
   UI --> Preferencias
 ```
 
-El frontend público no depende de `google.script.run`. Con autorización, llama a
+La interfaz web pública no depende de `google.script.run`. Con autorización, llama a
 `scripts.run` con el token en la cabecera `Authorization`. Apps Script ejecuta la
 Drive API con la identidad y permisos de esa persona.
 
@@ -48,7 +48,7 @@ sequenceDiagram
   loop lotes de hasta 10
     W->>A: Ejecutar lote
     A->>D: Revalidar y mutar
-    A-->>W: Checkpoints opacos
+    A-->>W: Puntos de control opacos
   end
   W->>A: Verificar resultados
   A-->>W: Conteos seguros
@@ -69,31 +69,32 @@ archivos. Drive realiza las copias y movimientos internamente.
 
 Cada operación usa una clave opaca en `appProperties`. Un reintento solo reutiliza
 un resultado cuando la clave, el destino, el nombre, el tipo y el tamaño conocido
-coinciden. Los trabajos guardan manifiesto, selección y checkpoints por separado.
+coinciden. Los trabajos guardan manifiesto, selección y puntos de control por
+separado.
 
 ```mermaid
 stateDiagram-v2
-  [*] --> queued
-  queued --> running
-  running --> paused
-  paused --> running
-  running --> needs_attention
-  needs_attention --> running
-  running --> completed
-  queued --> cancelled
-  running --> cancelled
-  completed --> [*]
-  cancelled --> [*]
+  [*] --> en_cola
+  en_cola --> en_ejecucion
+  en_ejecucion --> en_pausa
+  en_pausa --> en_ejecucion
+  en_ejecucion --> requiere_atencion
+  requiere_atencion --> en_ejecucion
+  en_ejecucion --> completado
+  en_cola --> cancelado
+  en_ejecucion --> cancelado
+  completado --> [*]
+  cancelado --> [*]
 ```
 
 Solo existe un trabajo activo por usuario. Los demás permanecen en cola y las
-mutaciones usan `LockService.getUserLock()` para evitar carreras.
+mutaciones usan `LockService.getUserLock()` para evitar ejecuciones simultáneas.
 
 ## Persistencia privada
 
 No existe una base de datos pública. `appDataFolder` conserva documentos JSON
 versionados y limitados a 450 KB. `UserProperties` mantiene únicamente índices
-pequeños, versión de esquema y referencia al trigger. Todo queda aislado por la
+pequeños, versión de esquema y referencia al activador. Todo queda aislado por la
 cuenta de Google conectada.
 
 ```mermaid
@@ -102,16 +103,16 @@ flowchart TD
   V --> W[Escribir documento privado]
   W --> R[Leer y verificar la copia]
   R --> I[Actualizar índice pequeño]
-  I --> C[Checkpoint reanudable]
+  I --> C[Punto de control reanudable]
 ```
 
 El historial se conserva durante 90 días. Los trabajos reanudables caducan a los
-7 días. La eliminación borra exclusivamente documentos, índices y triggers de
+7 días. La eliminación borra exclusivamente documentos, índices y activadores de
 DriveTransfer; no toca originales, copias ni destinos.
 
 ## Programaciones
 
-Un único dispatcher periódico por usuario reclama trabajos con lock. Las
+Un único planificador periódico por usuario reclama trabajos con bloqueo. Las
 programaciones admiten copia o sincronización conservadora, nunca movimiento.
 Los archivos modificados generan una versión fechada y una desaparición en el
 origen no provoca borrado en el destino.

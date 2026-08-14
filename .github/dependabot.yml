@@ -8,11 +8,15 @@ updates:
       time: "07:00"
       timezone: Europe/Madrid
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: dependencias
     labels:
       - dependencias
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    commit-message:
+      prefix: dependencias
     labels:
       - dependencias

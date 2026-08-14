@@ -2,7 +2,7 @@
 
 Fecha: 13 de agosto de 2026
 
-Versión: 1.0.1
+Versión: 1.0.2
 
 ## Capacidades cubiertas
 
@@ -11,9 +11,9 @@ Versión: 1.0.1
 - Conflictos: omitir, conservar ambos con nombre seguro o detenerse para revisar.
 - Favoritos privados, cola con un único trabajo activo y reintento selectivo.
 - Documentos privados versionados en `appDataFolder` con manifiesto, selección y
-  checkpoints separados.
+  puntos de control separados.
 - Programaciones guiadas, sincronización unidireccional conservadora y
-  dispatcher bloqueado por usuario.
+  planificador bloqueado por usuario.
 - Historial durante 90 días, informes JSON/CSV seguros y avisos opcionales.
 - Árbol virtualizado probado con 25.000 elementos sintéticos.
 
@@ -22,7 +22,7 @@ Versión: 1.0.1
 1. Recorrer exploración desde selección hasta resultado, incluyendo conflictos.
 2. Ejecutar «Solo comprobar» sin emitir mutaciones.
 3. Copiar y mover con confirmación reforzada, pausa, reanudación y cancelación.
-4. Reintentar solo fallos y conservar checkpoints completados.
+4. Reintentar solo fallos y conservar puntos de control completados.
 5. Probar favoritos, cierre, recuperación y eliminación de datos.
 6. Calcular programaciones única, diaria, semanal y mensual con zona horaria.
 7. Confirmar que mover no puede programarse y sincronizar nunca elimina.
@@ -33,7 +33,7 @@ Versión: 1.0.1
 ## Límites verificados
 
 - 100 elementos por página, 10 mutaciones por lote y 5.000 selecciones guardadas.
-- Sin IDs, nombres, tokens ni payloads de trabajo persistidos en el navegador en
+- Sin IDs, nombres, tokens ni cargas de trabajo persistidos en el navegador en
   modo Google.
 - Restaurar un trabajo de movimiento vuelve a exigir confirmación.
 - Sin sustitución silenciosa de duplicados ni eliminación del destino.
