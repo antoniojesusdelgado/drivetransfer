@@ -2,9 +2,13 @@
 
 <!-- Qué cambia y por qué. -->
 
-## Impacto
+## Cambios
 
-<!-- Efecto para usuarios, seguridad, privacidad o compatibilidad. -->
+<!-- Enumera los cambios relevantes y limita el alcance a esta propuesta. -->
+
+## Impacto y riesgos
+
+<!-- Efecto para usuarios, seguridad, privacidad, accesibilidad o compatibilidad. -->
 
 ## Validación
 
@@ -13,8 +17,13 @@
 - [ ] TypeScript
 - [ ] Pruebas
 - [ ] Compilación web y Apps Script
-- [ ] Revisión de seguridad y datos ficticios
+- [ ] Revisión de accesibilidad y diseño adaptable, cuando corresponda
+- [ ] Revisión de seguridad, privacidad y datos ficticios
 
 ## Privacidad
 
 - [ ] No contiene tokens, credenciales, IDs, nombres ni documentos privados.
+
+## Evidencias
+
+<!-- En cambios visuales, añade capturas sintéticas de los tamaños afectados. -->

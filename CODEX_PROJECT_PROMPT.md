@@ -1,28 +1,14 @@
-# Contexto inicial del proyecto
+# Nota histórica del proyecto
 
-DriveTransfer nació como una solución técnica personal que presenta una forma
-segura de organizar grandes volúmenes de archivos en Google Drive. El repositorio
-público se desarrolló desde cero y no reproduce código, documentos, datos,
-estructuras, métricas ni procedimientos de ninguna organización.
+Este archivo conserva el origen documental de DriveTransfer: un proyecto
+personal desarrollado desde cero para explorar una gestión más controlada de
+archivos en Google Drive.
 
-## Objetivos originales
+La definición vigente del producto está en
+[PROJECT_BRIEF.md](PROJECT_BRIEF.md). Las decisiones técnicas y de seguridad se
+mantienen en [ARCHITECTURE.md](ARCHITECTURE.md) y
+[SECURITY.md](SECURITY.md). La información sobre el desarrollo asistido se
+publica en [Transparencia sobre IA](https://drivetransfer.app/transparencia-ia).
 
-- Seleccionar origen y destino en Mi unidad o unidades compartidas.
-- Indexar de forma paginada y respetar cuotas de Google.
-- Elegir archivos mediante un árbol accesible con búsqueda y selección parcial.
-- Separar copia y movimiento, con copia predeterminada.
-- Comprobar conflictos y permisos antes de modificar Drive.
-- Ejecutar lotes reanudables e idempotentes.
-- Mostrar progreso y resultados sin identificadores internos.
-- Ofrecer un recorrido público con datos exclusivamente ficticios.
-
-## Límites permanentes
-
-- No incluir datos, credenciales, documentos ni identificadores reales.
-- No inferir ni publicar estructuras o procedimientos internos de terceros.
-- No permitir sobrescrituras silenciosas.
-- No registrar tokens, nombres o IDs de Drive.
-- Mantener una comprobación previa y confirmación adicional para mover.
-
-La arquitectura y las decisiones actuales se documentan en
-[ARCHITECTURE.md](ARCHITECTURE.md) y [SECURITY.md](SECURITY.md).
+Este documento no contiene instrucciones operativas, credenciales, datos de
+terceros ni contexto interno de organizaciones.
