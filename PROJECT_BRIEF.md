@@ -1,5 +1,11 @@
 # Resumen de producto
 
+|                      |                                                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Producto**         | DriveTransfer                                                                                                 |
+| **Versión publicada** | 1.0.2                                                                                                         |
+| **Estado**           | Aplicación operativa con exploración pública y acceso con Google sujeto a la verificación de sus permisos.   |
+
 ## Propósito
 
 DriveTransfer reduce el trabajo manual al organizar archivos entre carpetas de
@@ -9,6 +15,23 @@ ejecución por lotes y resultados en un flujo controlado.
 El repositorio es una recreación técnica personal desarrollada desde cero. No
 contiene código, documentos, datos, estructuras, métricas, procedimientos ni
 activos de empleadores, clientes u otras organizaciones.
+
+## Problema que aborda
+
+Las operaciones manuales sobre muchas carpetas de Drive dificultan anticipar
+duplicados, permisos insuficientes, destinos incorrectos y resultados
+parciales. DriveTransfer concentra esas decisiones en un proceso revisable
+antes de modificar contenido.
+
+## Objetivos de producto
+
+- Reducir decisiones implícitas y mostrar el efecto previsto de cada operación.
+- Mantener separados descubrimiento, selección, conflictos, ejecución y
+  resultado.
+- Permitir que una interrupción continúe sin repetir trabajo ya completado.
+- Aplicar las mismas reglas funcionales en Mi unidad y unidades compartidas.
+- Ofrecer un recorrido público que explique el producto sin solicitar una
+  cuenta de Google.
 
 ## Personas usuarias
 
@@ -41,6 +64,14 @@ flowchart TD
 - Las sincronizaciones añaden contenido o versiones fechadas, pero no borran.
 - Los datos del modo exploración son exclusivamente ficticios.
 - Los tokens, nombres e identificadores privados no se registran.
+
+## Fuera de alcance
+
+- Descargar, abrir, analizar o ejecutar el contenido interno de los archivos.
+- Sustituir un antivirus o certificar que un documento sea seguro al abrirlo.
+- Eliminar automáticamente contenido del destino durante una sincronización.
+- Ejecutar movimientos programados sin una confirmación interactiva.
+- Actuar con permisos distintos de los concedidos a la cuenta conectada.
 
 ## Criterios de aceptación
 
