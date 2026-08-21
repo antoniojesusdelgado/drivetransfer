@@ -1,4 +1,25 @@
-# DriveTransfer 1.0.2
+# DriveTransfer 1.0.3
+
+Actualización de presentación y documentación profesional.
+
+## Cambios
+
+- Unificada la estructura del README con Plataforma de gestión.
+- Incorporada una explicación breve mediante necesidad, intervención, solución
+  y evidencia.
+- Añadida una captura principal y una presentación homogénea de funciones,
+  arquitectura, desarrollo asistido, privacidad, validación y derechos.
+- Conservados los límites sobre datos ficticios, uso interno, evolución pública
+  independiente y ausencia de afiliación.
+
+## Alcance
+
+Esta versión actualiza la documentación pública del repositorio. No modifica el
+funcionamiento de la aplicación, los permisos OAuth ni el tratamiento de datos.
+
+---
+
+## DriveTransfer 1.0.2
 
 Actualización de estabilidad, autorización con Google y presentación adaptable.
 

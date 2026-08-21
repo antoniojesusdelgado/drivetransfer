@@ -1,6 +1,6 @@
 # DriveTransfer
 
-**Versión 1.0.2** · [drivetransfer.app](https://drivetransfer.app)
+**Versión 1.0.3** · [drivetransfer.app](https://drivetransfer.app)
 
 [![Versión publicada](https://img.shields.io/github/v/release/antoniojesusdelgado/drivetransfer?label=versi%C3%B3n)](https://github.com/antoniojesusdelgado/drivetransfer/releases/latest)
 [![Calidad](https://github.com/antoniojesusdelgado/drivetransfer/actions/workflows/quality.yml/badge.svg)](https://github.com/antoniojesusdelgado/drivetransfer/actions/workflows/quality.yml)
