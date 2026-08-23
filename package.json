@@ -17,7 +17,7 @@
     "clasp": "clasp"
   },
   "dependencies": {
-    "@fontsource/dm-sans": "^5.2.8",
+    "@fontsource/dm-sans": "^5.3.0",
     "@fontsource/dm-serif-display": "^5.2.8",
     "@phosphor-icons/react": "^2.1.10",
     "@vercel/analytics": "^2.0.1",
