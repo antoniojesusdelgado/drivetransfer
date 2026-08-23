@@ -43,9 +43,9 @@ const documents: Record<LegalRoute, LegalDocument> = {
         items: [
           "Cuenta conectada, identificadores técnicos y contenido o metadatos de Drive que selecciones expresamente.",
           "Trabajos, favoritos, conflictos, programaciones, preferencias y comunicaciones que configures.",
-          "Google presta OAuth, Drive, Picker, Apps Script y, con consentimiento, Analytics; Vercel aloja la interfaz.",
+          "Google presta OAuth, Drive, Picker, Apps Script y, con consentimiento, Analytics; Vercel aloja la interfaz y, también con consentimiento, proporciona Web Analytics.",
           "Google y Vercel pueden tratar datos fuera del Espacio Económico Europeo conforme a sus acuerdos y mecanismos internacionales aplicables.",
-          "El token permanece solo en memoria. Los trabajos reanudables duran hasta 7 días, el historial hasta 90 días y Analytics conserva datos durante 2 meses.",
+          "El token permanece solo en memoria. Los trabajos reanudables duran hasta 7 días, el historial hasta 90 días, Google Analytics conserva datos durante 2 meses y Vercel aplica la retención disponible en el plan activo.",
         ],
       },
       {
@@ -121,9 +121,10 @@ const documents: Record<LegalRoute, LegalDocument> = {
         ],
       },
       {
-        title: "2. Google Analytics 4",
+        title: "2. Analítica opcional",
         paragraphs: [
-          "Solo después de aceptar se carga Analytics y pueden crearse cookies _ga. Google Signals, publicidad, remarketing, User-ID y personalización permanecen desactivados; la retención está fijada en 2 meses.",
+          "Solo después de aceptar se cargan Google Analytics 4 y Vercel Web Analytics. Google Analytics puede crear cookies _ga; Google Signals, publicidad, remarketing, User-ID y personalización permanecen desactivados y su retención está fijada en 2 meses.",
+          "Vercel Web Analytics mide visitas y páginas de forma agregada sin crear cookies propias. No se envían nombres, correos, identificadores de Drive ni contenido de archivos.",
           "Puedes rechazar o retirar la analítica desde Preferencias de privacidad. Al retirarla se detienen nuevos envíos y se eliminan las cookies accesibles desde este dominio.",
         ],
       },

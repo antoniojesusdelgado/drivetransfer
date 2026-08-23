@@ -44,7 +44,8 @@ export function PrivacyControls() {
         <h2 id="consent-title">Tú decides sobre la analítica</h2>
         <span>
           Usamos almacenamiento necesario para recordar tu sesión. Google
-          Analytics solo se activará si lo aceptas. Puedes cambiarlo después.
+          Analytics y Vercel Web Analytics solo se activarán si lo aceptas.
+          Puedes cambiarlo después.
         </span>
         <a href="/cookies">Ver cookies y almacenamiento</a>
       </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { inject, type BeforeSendEvent } from "@vercel/analytics";
 import { normalizePublicEnvironmentValue } from "./environment";
 
 export type ConsentState = "pending" | "accepted" | "rejected";
@@ -67,6 +68,7 @@ function configureConsentDefaults(): void {
 }
 
 function enableAnalytics(): void {
+  inject({ beforeSend: filterVercelAnalyticsEvent });
   if (!GA_ID) return;
   configureConsentDefaults();
   window[`ga-disable-${GA_ID}`] = false;
@@ -84,6 +86,12 @@ function enableAnalytics(): void {
     script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_ID)}`;
     document.head.append(script);
   }
+}
+
+export function filterVercelAnalyticsEvent(
+  event: BeforeSendEvent,
+): BeforeSendEvent | null {
+  return readPreferences()?.analytics ? event : null;
 }
 
 function disableAnalytics(): void {

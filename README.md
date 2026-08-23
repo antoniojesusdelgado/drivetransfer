@@ -114,6 +114,10 @@ información pública está disponible en [Privacidad](https://drivetransfer.app
 [Cookies](https://drivetransfer.app/cookies) y
 [Eliminar datos](https://drivetransfer.app/eliminar-datos).
 
+Google Analytics y Vercel Web Analytics permanecen desactivados hasta que la
+persona usuaria acepta expresamente la analítica desde las preferencias de
+privacidad.
+
 Es un proyecto personal, gratuito y no comercial. No está afiliado, patrocinado
 ni aprobado por Google, empleadores o clientes.
 
