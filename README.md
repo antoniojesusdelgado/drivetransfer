@@ -11,6 +11,7 @@ Herramienta web para seleccionar, revisar y transferir archivos entre carpetas
 de Google Drive con control previo de permisos y conflictos.
 
 [Probar DriveTransfer](https://drivetransfer.app) ·
+[Ver el caso profesional](https://antoniodelgado.tech/proyectos/drivetransfer) ·
 [Ver la última versión](https://github.com/antoniojesusdelgado/drivetransfer/releases/latest) ·
 [Consultar seguridad](SECURITY.md) · [Configurar el proyecto](DEPLOYMENT.md)
 
@@ -26,10 +27,9 @@ con mayor control sobre la selección, los permisos y los posibles duplicados.
 
 ### Intervención
 
-Antonio Delgado realizó el análisis de la necesidad, la toma de requisitos, el
-desarrollo, las pruebas y la implantación de la herramienta interna CopyDrive.
-Posteriormente evolucionó la solución como un producto web público e
-independiente.
+Como Analista Funcional, analicé la necesidad, recogí requisitos y realicé el
+diseño, el desarrollo, las pruebas y la implantación de CopyDrive. Después
+evolucioné ese aprendizaje como un producto web público e independiente.
 
 ### Solución
 
