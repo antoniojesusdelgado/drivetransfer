@@ -60,6 +60,8 @@ describe("legal pages", () => {
 
     expect(cookies).toContain("Solo después");
     expect(cookies).toContain("_ga");
+    expect(cookies).toContain("Vercel Web Analytics");
+    expect(cookies).toContain("sin crear cookies propias");
     expect(deletion).toContain("no elimina archivos originales");
   });
 });

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   clearDriveTransferLocalData,
+  filterVercelAnalyticsEvent,
   savePrivacyPreferences,
 } from "../src/privacy";
 
@@ -23,9 +24,32 @@ describe("privacy preferences", () => {
       document.querySelector("script[data-drivetransfer-analytics]"),
     ).toBeNull();
     expect(
+      document.querySelector('script[data-sdkn^="@vercel/analytics"]'),
+    ).toBeNull();
+    expect(
       window.localStorage.getItem("driveTransfer.privacyPreferences"),
     ).toContain('"analytics":false');
     expect(preferences.version).toBe(3);
+  });
+
+  it("loads Vercel Web Analytics only after explicit acceptance", () => {
+    const event = {
+      type: "pageview",
+      url: "https://drivetransfer.app/",
+    } as const;
+
+    expect(filterVercelAnalyticsEvent(event)).toBeNull();
+
+    savePrivacyPreferences(true);
+
+    expect(
+      document.querySelector('script[data-sdkn^="@vercel/analytics"]'),
+    ).not.toBeNull();
+    expect(filterVercelAnalyticsEvent(event)).toEqual(event);
+
+    savePrivacyPreferences(false);
+
+    expect(filterVercelAnalyticsEvent(event)).toBeNull();
   });
 
   it("clears DriveTransfer keys but preserves unrelated storage", () => {
